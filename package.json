@@ -8,7 +8,9 @@
   },
   "files": [
     "dist/index.js",
-    "src","node_modules", "dist"
+    "src",
+    "node_modules",
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -50,6 +52,7 @@
     ]
   },
   "dependencies": {
+    "d3": "^3.5.17",
     "d3-save-svg": "0.0.2",
     "jspdf": "^1.5.3"
   }

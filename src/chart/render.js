@@ -80,17 +80,16 @@ function render(config) {
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
     .on('click', onClick(config))
 
-  // Person Card Shadow
+  // Person Card, with Shadow
   nodeEnter
     .append('rect')
     .attr('width', nodeWidth)
     .attr('height', nodeHeight)
     .attr('fill', backgroundColor)
-    .attr('stroke', borderColor)
     .attr('rx', nodeBorderRadius)
     .attr('ry', nodeBorderRadius)
-    .attr('fill-opacity', 0.05)
-    .attr('stroke-opacity', 0.025)
+    .attr('fill-opacity', 0.13)
+    .attr('stroke-opacity', 0.1)
     .attr('filter', 'url(#boxShadow)')
 
   // Person Card Container
@@ -101,19 +100,18 @@ function render(config) {
     .attr('height', nodeHeight)
     .attr('id', d => d.id)
     .attr('fill', backgroundColor)
-    .attr('stroke', borderColor)
     .attr('rx', nodeBorderRadius)
     .attr('ry', nodeBorderRadius)
     .style('cursor', helpers.getCursorForNode)
 
   const namePos = {
-    x: nodeWidth / 2,
-    y: nodePaddingY * 1.8 + avatarWidth,
+    x: 74,
+    y: 28,
   }
 
   const avatarPos = {
-    x: nodeWidth / 2 - avatarWidth / 2,
-    y: nodePaddingY / 2,
+    x: 13,
+    y: 13,
   }
 
   // Person's Name
@@ -133,8 +131,8 @@ function render(config) {
   nodeEnter
     .append('text')
     .attr('class', PERSON_TITLE_CLASS + ' unedited')
-    .attr('x', nodeWidth / 2)
-    .attr('y', namePos.y + nodePaddingY * 2.4)
+    .attr('x', namePos.x)
+    .attr('y', namePos.y + 21)
     .attr('dy', '0.1em')
     .style('font-size', 12)
     .style('cursor', 'pointer')
@@ -147,8 +145,8 @@ function render(config) {
   nodeEnter
     .append('text')
     .attr('class', PERSON_REPORTS_CLASS)
-    .attr('x', nodePaddingX + 8)
-    .attr('y', namePos.y + nodePaddingY + heightForTitle)
+    .attr('x', nodeWidth / 2)
+    .attr('y', nodeHeight + 20)
     .attr('dy', '.9em')
     .style('font-size', 14)
     .style('font-weight', 400)

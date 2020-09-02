@@ -54,7 +54,7 @@ module.exports = function iconLink({ svg, x = 5, y = 5 }) {
     .attr('id', 'bounds')
     .attr('x', 0)
     .attr('y', 0)
-    .attr('width', 24)
-    .attr('height', 24)
+    .attr('width', 48)
+    .attr('height', 48)
     .attr('fill', 'transparent')
 }
