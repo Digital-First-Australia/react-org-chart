@@ -25,7 +25,7 @@ module.exports = function wrapText(text, width) {
     let tspan = text
       .text(null)
       .append('tspan')
-      .style('text-anchor', 'middle')
+      .style('text-anchor', 'left')
       .attr('x', x)
       .attr('y', y)
       .attr('dy', dy + 'em')
@@ -40,7 +40,7 @@ module.exports = function wrapText(text, width) {
         line = [word]
         tspan = text
           .append('tspan')
-          .style('text-anchor', 'middle')
+          .style('text-anchor', 'left')
           .attr('x', x)
           .attr('y', y)
           .attr('dy', ++lineNumber * lineHeight + dy + 'em')

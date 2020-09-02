@@ -17,6 +17,8 @@ function init(options) {
     treeData: options.data,
   }
 
+  console.log("npm link working! Updated!!!!!!!!!!!!!!!!!!!!!!! yay");
+
   if (!config.id) {
     console.error('react-org-chart: missing id for svg root')
     return
@@ -100,7 +102,7 @@ function init(options) {
   // Define box shadow and avatar border radius
   defineBoxShadow(svgroot, 'boxShadow')
   defineAvatarClip(svgroot, 'avatarClip', {
-    borderRadius: 40,
+    borderRadius: 6,
   })
 
   // Center the viewport on initial load
