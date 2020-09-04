@@ -206,7 +206,7 @@ function render(config) {
     .attr('transform', d => `translate(${d.x},${d.y})`)
 
 
-  // Button to expand node for more employee information. 
+  // Button to expand node for more information. 
   nodeEnter
   .append('rect')
     .attr('width', 32)
