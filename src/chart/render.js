@@ -205,6 +205,19 @@ function render(config) {
     .duration(animationDuration)
     .attr('transform', d => `translate(${d.x},${d.y})`)
 
+
+  // Button to expand node for more information. 
+  nodeEnter
+  .append('rect')
+    .attr('width', 32)
+    .attr('height', 32)
+    .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
+    .attr('y', (nodeHeight - 32) / 2)
+    .attr('fill', titleColor)
+    .attr('rx', 16)
+    .attr('ry', 16)
+    .style('cursor', helpers.getCursorForNode)
+
   nodeUpdate
     .select('rect.box')
     .attr('fill', backgroundColor)
