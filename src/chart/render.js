@@ -213,7 +213,7 @@ function render(config) {
     .attr('height', 32)
     .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
     .attr('y', (nodeHeight - 32) / 2)
-    .attr('fill', titleColor)
+    .attr('fill', '#fafafa')
     .attr('rx', 16)
     .attr('ry', 16)
     .style('cursor', helpers.getCursorForNode)
