@@ -218,7 +218,7 @@ function render(config) {
     .attr('fill', '#FAFAFA')
     .attr('id', d => `expand-${d.id}`)
     .style('cursor', helpers.getCursorForNode)
-    .on('click', function (d) { expandCard(d.id) })
+    .on('click', d => expandCard(d.id) )
 
   // SVG arrows on employee node expansion button
   nodeEnter
