@@ -222,8 +222,8 @@ function render(config) {
   .append('line')
     .attr("x1", 244)
     .attr("y1", 34)
-    .attr("x2", 252) 
-    .attr("y2", 40.5)
+    .attr("x2", 253) 
+    .attr("y2", 40)
     .style("stroke", "201F1E")
     .style("stroke-width", 1)
 
@@ -231,8 +231,8 @@ function render(config) {
   .append('line')
     .attr("x1", 259)
     .attr("y1", 34)
-    .attr("x2", 252) 
-    .attr("y2", 40.5)
+    .attr("x2", 253) 
+    .attr("y2", 40)
     .style("stroke", "201F1E")
     .style("stroke-width", 1)
 
