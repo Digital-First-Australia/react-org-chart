@@ -214,6 +214,19 @@ function render(config) {
     .attr('href', d => d.person.avatar)
     .attr('clip-path', 'url(#avatarClip)')
 
+  // Person's Details Button
+  nodeEnter
+  .append('rect')
+    .attr('width', 32)
+    .attr('height', 32)
+    .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
+    .attr('y', (nodeHeight - 32) / 2)
+    .attr('fill', titleColor)
+    .attr('fill-opacity','0.05')
+    .attr('rx', 16)
+    .attr('ry', 16)
+    .style('cursor', helpers.getCursorForNode)
+
   // Person's Link
   const nodeLink = nodeEnter
     .append('a')
