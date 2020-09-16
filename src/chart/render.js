@@ -227,6 +227,7 @@ function render(config) {
     .attr("y1", 34)
     .attr("x2", 253.1) 
     .attr("y2", 40)
+    .attr('id', d => `arrow-${d.id}`)
     .style("stroke", "201F1E")
     .style("stroke-width", 1)
 
@@ -236,13 +237,13 @@ function render(config) {
     .attr("y1", 34)
     .attr("x2", 252.9) 
     .attr("y2", 40)
+    .attr('id', d => `arrow-${d.id}`)
     .style("stroke", "201F1E")
     .style("stroke-width", 1)
 
   nodeUpdate
     .select('rect.box')
     .attr('fill', backgroundColor)
-    .attr('stroke', borderColor)
 
   // Transition exiting nodes to the parent's new position.
   const nodeExit = node
@@ -293,17 +294,20 @@ function render(config) {
 }
 
 function expandCard(id) {
-  const card = d3.select(`#card-${id}`);
-  const cardcontainer = d3.select(`#cardcontainer-${id}`);
-  const isExpanded = card.attr('isExpanded') == 'true' && cardcontainer.attr('isExpanded') == 'true';
+  const card = d3.select(`#card-${id}`)
+  const cardcontainer = d3.select(`#cardcontainer-${id}`)
+  const arrow = d3.selectAll(`#arrow-${id}`)
+  const isExpanded = card.attr('isExpanded') == 'true' && cardcontainer.attr('isExpanded') == 'true'
 
   if(isExpanded) {
     card.attr('height', 71)
     cardcontainer.attr('height', 71)
+    arrow.attr('y2', 40)
   }
   else {
     card.attr('height', 247)
     cardcontainer.attr('height', 247)
+    arrow.attr('y2', 29)
   }
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
