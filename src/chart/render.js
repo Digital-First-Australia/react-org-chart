@@ -221,7 +221,7 @@ function render(config) {
     .attr('height', 32)
     .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
     .attr('y', (nodeHeight - 32) / 2)
-    .attr('fill', titleColor)
+    .attr('fill', '#fafafa')
     .attr('fill-opacity','0.05')
     .attr('rx', 16)
     .attr('ry', 16)
