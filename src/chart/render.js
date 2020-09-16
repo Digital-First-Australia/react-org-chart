@@ -214,6 +214,7 @@ function render(config) {
     .attr('r', 16)
     .attr('fill', '#FAFAFA')
     .style('cursor', helpers.getCursorForNode)
+    .on('click', expandCard)
 
   // SVG arrows on employee expansion button
   nodeEnter
@@ -287,5 +288,8 @@ function render(config) {
   onConfigChange(config)
 }
 
+function expandCard() {
+  d3.selectAll('rect').attr('height', 247)
+};
 
 module.exports = render
