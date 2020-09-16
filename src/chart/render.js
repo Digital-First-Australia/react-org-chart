@@ -208,14 +208,11 @@ function render(config) {
 
   // More information about employee 
   nodeEnter
-  .append('rect')
-    .attr('width', 32)
-    .attr('height', 32)
-    .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
-    .attr('y', (nodeHeight - 32) / 2)
+  .append('circle')
+    .attr('cx', 252.5)
+    .attr('cy', 34.5)
+    .attr('r', 16)
     .attr('fill', '#FAFAFA')
-    .attr('rx', 16)
-    .attr('ry', 16)
     .style('cursor', helpers.getCursorForNode)
 
   // SVG arrows on employee expansion button
@@ -223,7 +220,7 @@ function render(config) {
   .append('line')
     .attr("x1", 246)
     .attr("y1", 34)
-    .attr("x2", 253) 
+    .attr("x2", 253.1) 
     .attr("y2", 40)
     .style("stroke", "201F1E")
     .style("stroke-width", 1)
@@ -232,7 +229,7 @@ function render(config) {
   .append('line')
     .attr("x1", 259)
     .attr("y1", 34)
-    .attr("x2", 253) 
+    .attr("x2", 252.9) 
     .attr("y2", 40)
     .style("stroke", "201F1E")
     .style("stroke-width", 1)
@@ -289,4 +286,6 @@ function render(config) {
   })
   onConfigChange(config)
 }
+
+
 module.exports = render
