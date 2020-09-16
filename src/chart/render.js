@@ -102,6 +102,7 @@ function render(config) {
     .attr('fill', backgroundColor)
     .attr('rx', nodeBorderRadius)
     .attr('ry', nodeBorderRadius)
+    .attr('isExpanded', false)
     .style('cursor', helpers.getCursorForNode)
 
   const namePos = {
@@ -289,7 +290,15 @@ function render(config) {
 }
 
 function expandCard() {
-  d3.selectAll('rect').attr('height', 247)
+  const cards = d3.selectAll('rect');
+  if(cards.attr('isExpanded')) {
+    cards.attr('height', 71)
+    cards.attr('isExpanded', false)
+  }
+  else {
+    cards.attr('height', 247)
+    cards.attr('isExpanded', true)
+  }
 };
 
 module.exports = render
