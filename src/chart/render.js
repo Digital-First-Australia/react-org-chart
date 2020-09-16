@@ -85,12 +85,14 @@ function render(config) {
     .append('rect')
     .attr('width', nodeWidth)
     .attr('height', nodeHeight)
+    .attr('id', d => `card-${d.id}`)
     .attr('fill', backgroundColor)
     .attr('rx', nodeBorderRadius)
     .attr('ry', nodeBorderRadius)
     .attr('fill-opacity', 0.13)
     .attr('stroke-opacity', 0.1)
     .attr('filter', 'url(#boxShadow)')
+    .attr('isExpanded', 'false')
 
   // Person Card Container
   nodeEnter
@@ -98,11 +100,11 @@ function render(config) {
     .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
     .attr('width', nodeWidth)
     .attr('height', nodeHeight)
-    .attr('id', d => d.id)
+    .attr('id', d => `cardcontainer-${d.id}`)
     .attr('fill', backgroundColor)
     .attr('rx', nodeBorderRadius)
     .attr('ry', nodeBorderRadius)
-    .attr('isExpanded', false)
+    .attr('isExpanded', 'false')
     .style('cursor', helpers.getCursorForNode)
 
   const namePos = {
@@ -207,17 +209,18 @@ function render(config) {
     .attr('transform', d => `translate(${d.x},${d.y})`)
 
 
-  // More information about employee 
+  // Employee node expansion button
   nodeEnter
   .append('circle')
     .attr('cx', 252.5)
     .attr('cy', 34.5)
     .attr('r', 16)
     .attr('fill', '#FAFAFA')
+    .attr('id', d => `expand-${d.id}`)
     .style('cursor', helpers.getCursorForNode)
-    .on('click', expandCard)
+    .on('click', function (d) { expandCard(d.id) })
 
-  // SVG arrows on employee expansion button
+  // SVG arrows on employee node expansion button
   nodeEnter
   .append('line')
     .attr("x1", 246)
@@ -289,16 +292,21 @@ function render(config) {
   onConfigChange(config)
 }
 
-function expandCard() {
-  const cards = d3.selectAll('rect');
-  if(cards.attr('isExpanded')) {
-    cards.attr('height', 71)
-    cards.attr('isExpanded', false)
+function expandCard(id) {
+  const card = d3.select(`#card-${id}`);
+  const cardcontainer = d3.select(`#cardcontainer-${id}`);
+  const isExpanded = card.attr('isExpanded') == 'true' && cardcontainer.attr('isExpanded') == 'true';
+
+  if(isExpanded) {
+    card.attr('height', 71)
+    cardcontainer.attr('height', 71)
   }
   else {
-    cards.attr('height', 247)
-    cards.attr('isExpanded', true)
+    card.attr('height', 247)
+    cardcontainer.attr('height', 247)
   }
+  card.attr('isExpanded', isExpanded ? 'false' : 'true')
+  cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
 };
 
 module.exports = render
