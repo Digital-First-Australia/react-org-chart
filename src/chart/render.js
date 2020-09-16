@@ -206,7 +206,7 @@ function render(config) {
     .attr('transform', d => `translate(${d.x},${d.y})`)
 
 
-  // Button to expand node for more information. 
+  // More information about employee 
   nodeEnter
   .append('rect')
     .attr('width', 32)
@@ -218,9 +218,10 @@ function render(config) {
     .attr('ry', 16)
     .style('cursor', helpers.getCursorForNode)
 
+  // SVG arrows on employee expansion button
   nodeEnter
   .append('line')
-    .attr("x1", 244)
+    .attr("x1", 246)
     .attr("y1", 34)
     .attr("x2", 253) 
     .attr("y2", 40)
