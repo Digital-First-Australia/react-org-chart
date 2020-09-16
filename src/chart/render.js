@@ -213,10 +213,28 @@ function render(config) {
     .attr('height', 32)
     .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
     .attr('y', (nodeHeight - 32) / 2)
-    .attr('fill', '#fafafa')
+    .attr('fill', '#FAFAFA')
     .attr('rx', 16)
     .attr('ry', 16)
     .style('cursor', helpers.getCursorForNode)
+
+  nodeEnter
+  .append('line')
+    .attr("x1", 244)
+    .attr("y1", 34)
+    .attr("x2", 252) 
+    .attr("y2", 40.5)
+    .style("stroke", "201F1E")
+    .style("stroke-width", 1)
+
+  nodeEnter
+  .append('line')
+    .attr("x1", 259)
+    .attr("y1", 34)
+    .attr("x2", 252) 
+    .attr("y2", 40.5)
+    .style("stroke", "201F1E")
+    .style("stroke-width", 1)
 
   nodeUpdate
     .select('rect.box')
