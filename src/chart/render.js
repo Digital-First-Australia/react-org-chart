@@ -283,7 +283,8 @@ nodeEnter
     .attr('cx', 252.5)
     .attr('cy', 34.5)
     .attr('r', 16)
-    .attr('fill', '#FAFAFA')
+    .attr('fill', titleColor)
+    .attr('fill-opacity', 0.08)
     .attr('id', d => `expand-${d.id}`)
     .style('cursor', helpers.getCursorForNode)
     .on('click', d => expandCard(d.id) )
@@ -296,7 +297,7 @@ nodeEnter
     .attr("x2", 253.1) 
     .attr("y2", 38)
     .attr('id', d => `arrow-${d.id}`)
-    .style("stroke", "201F1E")
+    .style("stroke", titleColor)
     .style("stroke-width", 1)
 
   nodeEnter
@@ -306,7 +307,7 @@ nodeEnter
     .attr("x2", 252.9) 
     .attr("y2", 38)
     .attr('id', d => `arrow-${d.id}`)
-    .style("stroke", "201F1E")
+    .style("stroke", titleColor)
     .style("stroke-width", 1)
 
   /*nodeUpdate
