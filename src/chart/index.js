@@ -17,8 +17,6 @@ function init(options) {
     treeData: options.data,
   }
 
-  console.log("npm link working! Updated!!!!!!!!!!!!!!!!!!!!!!! yay");
-
   if (!config.id) {
     console.error('react-org-chart: missing id for svg root')
     return
