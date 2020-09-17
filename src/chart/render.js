@@ -85,12 +85,14 @@ function render(config) {
     .append('rect')
     .attr('width', nodeWidth)
     .attr('height', nodeHeight)
+    .attr('id', d => `card-${d.id}`)
     .attr('fill', backgroundColor)
     .attr('rx', nodeBorderRadius)
     .attr('ry', nodeBorderRadius)
     .attr('fill-opacity', 0.13)
     .attr('stroke-opacity', 0)
     .attr('filter', 'url(#boxShadow)')
+    .attr('isExpanded', 'false')
 
   // Person Card Container
   nodeEnter
@@ -98,10 +100,11 @@ function render(config) {
     .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
     .attr('width', nodeWidth)
     .attr('height', nodeHeight)
-    .attr('id', d => d.id)
+    .attr('id', d => `cardcontainer-${d.id}`)
     .attr('fill', backgroundColor)
     .attr('rx', nodeBorderRadius)
     .attr('ry', nodeBorderRadius)
+    .attr('isExpanded', 'false')
     .style('cursor', helpers.getCursorForNode)
 
   const namePos = {
@@ -253,6 +256,39 @@ function render(config) {
     .duration(animationDuration)
     .attr('transform', d => `translate(${d.x},${d.y})`)
 
+
+  // Employee node expansion button
+  nodeEnter
+  .append('circle')
+    .attr('cx', 252.5)
+    .attr('cy', 34.5)
+    .attr('r', 16)
+    .attr('fill', '#FAFAFA')
+    .attr('id', d => `expand-${d.id}`)
+    .style('cursor', helpers.getCursorForNode)
+    .on('click', d => expandCard(d.id) )
+
+  // SVG arrows on employee node expansion button
+  nodeEnter
+  .append('line')
+    .attr("x1", 246)
+    .attr("y1", 34)
+    .attr("x2", 253.1) 
+    .attr("y2", 40)
+    .attr('id', d => `arrow-${d.id}`)
+    .style("stroke", "201F1E")
+    .style("stroke-width", 1)
+
+  nodeEnter
+  .append('line')
+    .attr("x1", 259)
+    .attr("y1", 34)
+    .attr("x2", 252.9) 
+    .attr("y2", 40)
+    .attr('id', d => `arrow-${d.id}`)
+    .style("stroke", "201F1E")
+    .style("stroke-width", 1)
+
   nodeUpdate
     .select('rect.box')
     .attr('fill', backgroundColor)
@@ -304,4 +340,26 @@ function render(config) {
   })
   onConfigChange(config)
 }
+
+function expandCard(id) {
+  const card = d3.select(`#card-${id}`)
+  const cardcontainer = d3.select(`#cardcontainer-${id}`)
+  const arrow = d3.selectAll(`#arrow-${id}`)
+  const isExpanded = card.attr('isExpanded') == 'true' && cardcontainer.attr('isExpanded') == 'true'
+
+  if(isExpanded) {
+    card.attr('height', 71)
+    cardcontainer.attr('height', 71)
+    arrow.attr('y2', 40)
+  }
+  else {
+    card.attr('height', 247)
+    cardcontainer.attr('height', 247)
+    arrow.attr('y2', 29)
+  }
+  card.attr('isExpanded', isExpanded ? 'false' : 'true')
+  cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
+};
+
 module.exports = render
+
