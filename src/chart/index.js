@@ -22,6 +22,8 @@ function init(options) {
     return
   }
 
+  console.log("NVM LINK WORKING!");
+
   const {
     id,
     treeData,

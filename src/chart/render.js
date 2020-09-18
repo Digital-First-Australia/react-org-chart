@@ -83,7 +83,7 @@ function render(config) {
   nodeEnter
     .append('rect')
     .attr('id', d => `coin-shadow-${d.id}`)
-    .attr('class', d => (!d.children ? `empty box coin` : 'box coin'))
+    .attr('class', d => (!helpers.getTextForTitle(d) ? `empty box coin` : 'box coin'))
     .attr('x', nodeWidth / 2 - 16)
     .attr('y', nodeHeight - 2)
     .attr('width', 32)
@@ -100,7 +100,7 @@ function render(config) {
   nodeEnter
     .append('rect')
     .attr('id', d => `coin-background-${d.id}`)
-    .attr('class', d => (!d.children ? `empty box coin` : 'box coin'))
+    .attr('class', d => (!helpers.getTextForTitle(d) ? `empty box coin` : 'box coin'))
     .attr('x', nodeWidth / 2 - 16)
     .attr('y', nodeHeight - 2)
     .attr('width', 32)
@@ -115,7 +115,7 @@ function render(config) {
   nodeEnter
     .append('text')
     .attr('id', d => `coin-text-${d.id}`)
-    .attr('class', d => (!d.children ? `empty ${PERSON_REPORTS_CLASS} coin-text` : `${PERSON_REPORTS_CLASS} coin-text`))
+    .attr('class', d => (!helpers.getTextForTitle(d) ? `empty ${PERSON_REPORTS_CLASS} coin-text` : `${PERSON_REPORTS_CLASS} coin-text`))
     .attr('x', nodeWidth / 2)
     .attr('y', nodeHeight + 7)
     .attr('dy', '.9em')
