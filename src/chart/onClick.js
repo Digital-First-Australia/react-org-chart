@@ -1,5 +1,5 @@
 const d3 = require('d3')
-const { collapse } = require('../utils')
+const { helpers, collapse } = require('../utils')
 
 module.exports = onClick
 
@@ -7,6 +7,7 @@ function onClick(configOnClick) {
   const { loadConfig } = configOnClick
 
   return datum => {
+    
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
     const { loadChildren, render, onPersonClick } = config
@@ -49,12 +50,24 @@ function onClick(configOnClick) {
       config.callerMode = 0
       datum._children = datum.children
       datum.children = null
+
+      // change coin text
+      d3.select(`#coin-text-${datum.id}`)
+        .text(helpers.getTextForTitle(datum))
+        .style("font-size", "13")
+        .attr('dy', '.9em');
     } else {
       // Expand the children
       config.callerNode = datum
       config.callerMode = 1
       datum.children = datum._children
       datum._children = null
+
+      // change coin text
+      d3.select(`#coin-text-${datum.id}`)
+        .text('-')
+        .style("font-size", "25")
+        .attr('dy', '.6em');
     }
 
     // Pass in the clicked datum as the sourceNode which

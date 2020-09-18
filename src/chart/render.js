@@ -78,31 +78,101 @@ function render(config) {
     .insert('g')
     .attr('class', CHART_NODE_CLASS)
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
-    .on('click', onClick(config))
 
-  // Person Card Shadow
+  // Person's Coin Background Card's Shadow
   nodeEnter
     .append('rect')
-    .attr('width', nodeWidth)
-    .attr('height', nodeHeight)
+    .attr('id', d => `coin-shadow-${d.id}`)
+    .attr('class', d => (!d.children ? `empty box coin` : 'box coin'))
+    .attr('x', nodeWidth / 2 - 16)
+    .attr('y', nodeHeight - 2)
+    .attr('width', 32)
+    .attr('height', 32)
     .attr('fill', backgroundColor)
-    .attr('rx', nodeBorderRadius)
-    .attr('ry', nodeBorderRadius)
+    .attr('rx', 16)
+    .attr('ry', 16)
     .attr('fill-opacity', 0.13)
     .attr('stroke-opacity', 0)
     .attr('filter', 'url(#boxShadow)')
+    .style('cursor', helpers.getCursorForNode)
 
-  // Person Card Container
+  // Person's Coin Background Card
   nodeEnter
     .append('rect')
-    .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
-    .attr('width', nodeWidth)
-    .attr('height', nodeHeight)
-    .attr('id', d => d.id)
+    .attr('id', d => `coin-background-${d.id}`)
+    .attr('class', d => (!d.children ? `empty box coin` : 'box coin'))
+    .attr('x', nodeWidth / 2 - 16)
+    .attr('y', nodeHeight - 2)
+    .attr('width', 32)
+    .attr('height', 32)
     .attr('fill', backgroundColor)
-    .attr('rx', nodeBorderRadius)
-    .attr('ry', nodeBorderRadius)
+    .attr('rx', 16)
+    .attr('ry', 16)
     .style('cursor', helpers.getCursorForNode)
+    .on('click', onClick(config))
+
+  // Person's Coin Text
+  nodeEnter
+    .append('text')
+    .attr('id', d => `coin-text-${d.id}`)
+    .attr('class', d => (!d.children ? `empty ${PERSON_REPORTS_CLASS} coin-text` : `${PERSON_REPORTS_CLASS} coin-text`))
+    .attr('x', nodeWidth / 2)
+    .attr('y', nodeHeight + 7)
+    .attr('dy', '.9em')
+    .style('font-size', 13)
+    .style('font-weight', 400)
+    .style('cursor', 'pointer')
+    .style('fill', reportsColor)
+    .style("text-anchor", "middle")
+    .text(helpers.getTextForTitle)
+    .on('click', onClick(config))
+
+  // remove all empty ones
+  d3.selectAll(".empty")
+    .remove();
+
+  // Make coin move on hover
+  /*d3.selectAll('.coin')
+    .on("mouseover",function(){
+      d3.select(this)
+        .transition()
+        .duration(100)
+        .attr('y', nodeHeight + 3);
+    })
+    .on("mouseout",function(){
+      d3.select(this)
+        .transition()
+        .duration(100)
+        .attr('y', nodeHeight - 2);
+    })*/
+  
+
+// Person Card Shadow
+nodeEnter
+  .append('rect')
+  .attr('width', nodeWidth)
+  .attr('height', nodeHeight)
+  .attr('id', d => `card-${d.id}`)
+  .attr('fill', backgroundColor)
+  .attr('rx', nodeBorderRadius)
+  .attr('ry', nodeBorderRadius)
+  .attr('fill-opacity', 0.13)
+  .attr('stroke-opacity', 0)
+  .attr('filter', 'url(#boxShadow)')
+  .attr('isExpanded', 'false')
+
+// Person Card Container
+nodeEnter
+  .append('rect')
+  .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
+  .attr('width', nodeWidth)
+  .attr('height', nodeHeight)
+  .attr('id', d => `cardcontainer-${d.id}`)
+  .attr('fill', backgroundColor)
+  .attr('rx', nodeBorderRadius)
+  .attr('ry', nodeBorderRadius)
+  .attr('isExpanded', 'false')
+  .style('cursor', helpers.getCursorForNode)
 
   const namePos = {
     x: 74,
@@ -140,54 +210,7 @@ function render(config) {
     .text(d => d.person.title)
 
   const heightForTitle = 60 // getHeightForText(d.person.title)
-  const reports = helpers.getTextForTitle;
-
-  // only show if there are reports
-  if (reports.length > 0) {
-
-    // Person's Reports Background Card's Shadow
-    nodeEnter
-    .append('rect')
-    .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', nodeHeight + 16)
-    .attr('width', 32)
-    .attr('height', 32)
-    .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
-    .attr('fill-opacity', 0.13)
-    .attr('stroke-opacity', 0)
-    .attr('filter', 'url(#boxShadow)')
-    .style('cursor', helpers.getCursorForNode)
-
-    // Person's Reports Background Card
-    nodeEnter
-    .append('rect')
-    .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', nodeHeight + 16)
-    .attr('width', 32)
-    .attr('height', 32)
-    .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
-    .style('cursor', helpers.getCursorForNode)
-
-    // Person's Reports
-    nodeEnter
-      .append('text')
-      .attr('class', PERSON_REPORTS_CLASS)
-      .attr('x', nodeWidth / 2)
-      .attr('y', nodeHeight + 24)
-      .attr('dy', '.9em')
-      .style('font-size', 14)
-      .style('font-weight', 400)
-      .style('cursor', 'pointer')
-      .style('fill', reportsColor)
-      .style("text-anchor", "middle")
-      .text(reports)
-  }
+  
 
   // Person's Avatar
   nodeEnter
@@ -215,17 +238,17 @@ function render(config) {
     .attr('clip-path', 'url(#avatarClip)')
 
   // Person's Details Button
-  nodeEnter
+  /*nodeEnter
   .append('rect')
     .attr('width', 32)
     .attr('height', 32)
     .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
     .attr('y', (nodeHeight - 32) / 2)
-    .attr('fill', titleColor)
+    .attr('fill', '#fafafa')
     .attr('fill-opacity','0.05')
     .attr('rx', 16)
     .attr('ry', 16)
-    .style('cursor', helpers.getCursorForNode)
+    .style('cursor', helpers.getCursorForNode)*/
 
   // Person's Link
   const nodeLink = nodeEnter
@@ -253,9 +276,43 @@ function render(config) {
     .duration(animationDuration)
     .attr('transform', d => `translate(${d.x},${d.y})`)
 
-  nodeUpdate
+
+  // Employee node expansion button
+  nodeEnter
+  .append('circle')
+    .attr('cx', 252.5)
+    .attr('cy', 34.5)
+    .attr('r', 16)
+    .attr('fill', titleColor)
+    .attr('fill-opacity', 0.08)
+    .attr('id', d => `expand-${d.id}`)
+    .style('cursor', helpers.getCursorForNode)
+    .on('click', d => expandCard(d.id) )
+
+  // SVG arrows on employee node expansion button
+  nodeEnter
+  .append('line')
+    .attr("x1", 247)
+    .attr("y1", 32)
+    .attr("x2", 253.1) 
+    .attr("y2", 38)
+    .attr('id', d => `arrow-${d.id}`)
+    .style("stroke", titleColor)
+    .style("stroke-width", 1)
+
+  nodeEnter
+  .append('line')
+    .attr("x1", 259)
+    .attr("y1", 32)
+    .attr("x2", 252.9) 
+    .attr("y2", 38)
+    .attr('id', d => `arrow-${d.id}`)
+    .style("stroke", titleColor)
+    .style("stroke-width", 1)
+
+  /*nodeUpdate
     .select('rect.box')
-    .attr('fill', backgroundColor)
+    .attr('fill', backgroundColor)*/
 
   // Transition exiting nodes to the parent's new position.
   const nodeExit = node
@@ -269,7 +326,7 @@ function render(config) {
   const link = svg.selectAll('path.link').data(links, d => d.target.id)
 
   // Wrap the title texts
-  const wrapWidth = 124
+  const wrapWidth = 200
   svg.selectAll('text.unedited.' + PERSON_NAME_CLASS).call(wrapText, wrapWidth)
   svg.selectAll('text.unedited.' + PERSON_TITLE_CLASS).call(wrapText, wrapWidth)
 
@@ -304,4 +361,40 @@ function render(config) {
   })
   onConfigChange(config)
 }
+
+function expandCard(id) {
+  const card = d3.select(`#card-${id}`)
+  const cardcontainer = d3.select(`#cardcontainer-${id}`)
+  const arrow = d3.selectAll(`#arrow-${id}`)
+  const isExpanded = card.attr('isExpanded') == 'true' && cardcontainer.attr('isExpanded') == 'true'
+
+  if(isExpanded) {
+    card
+      .transition()
+      .duration(150)
+      .attr('height', 71)
+    cardcontainer
+      .transition()
+      .duration(150)  
+      .attr('height', 71)
+    arrow.attr('y1', 32)
+    arrow.attr('y2', 38)
+  }
+  else {
+    card
+      .transition()
+      .duration(150)  
+      .attr('height', 247)
+    cardcontainer
+      .transition()
+      .duration(150)  
+      .attr('height', 247)
+    arrow.attr('y2', 31)
+    arrow.attr('y1', 37)
+  }
+  card.attr('isExpanded', isExpanded ? 'false' : 'true')
+  cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
+};
+
 module.exports = render
+
