@@ -11,11 +11,10 @@ function onClick(configOnClick) {
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
     const { loadChildren, render, onPersonClick } = config
-    event.preventDefault()
+    event.preventDefault();
 
     if (onPersonClick) {
       const result = onPersonClick(datum, d3.event)
-
       // If the `onPersonClick` handler returns `false`
       // Cancel the rest of this click handler
       if (typeof result === 'boolean' && !result) {
@@ -25,7 +24,9 @@ function onClick(configOnClick) {
 
     // If this person doesn't have children but `hasChild` is true,
     // attempt to load using the `loadChildren` config function
-    if (!datum.children && !datum._children && datum.hasChild) {
+    if ((datum.children == null || !datum.children || datum.children.length <= 0) 
+        && (datum._children == null || !datum._children || datum._children.length <= 0) 
+        && datum.hasChild) {
       if (!loadChildren) {
         console.error(
           'react-org-chart.onClick: loadChildren() not found in config'
