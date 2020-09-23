@@ -172,7 +172,7 @@ nodeEnter
   .attr('rx', nodeBorderRadius)
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
-  .style('cursor', helpers.getCursorForNode)
+  .style('cursor', 'default')
 
   const namePos = {
     x: 74,
@@ -191,7 +191,7 @@ nodeEnter
     .attr('x', namePos.x)
     .attr('y', namePos.y)
     .attr('dy', '.3em')
-    .style('cursor', 'pointer')
+    .style('cursor', 'default')
     .style('fill', nameColor)
     .style('font-size', 14)
     .text(d => d.person.name)
@@ -205,7 +205,7 @@ nodeEnter
     .attr('y', namePos.y + 21)
     .attr('dy', '0.1em')
     .style('font-size', 12)
-    .style('cursor', 'pointer')
+    .style('cursor', 'default')
     .style('fill', titleColor)
     .text(d => d.person.title)
 
