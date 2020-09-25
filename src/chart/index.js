@@ -139,7 +139,7 @@ function init(options) {
   // Defined zoom behavior
   var zoom = d3.behavior
     .zoom()
-    .scaleExtent([0.1, 1])
+    .scaleExtent([0.1, 2])
     .duration(50)
     .on('zoom', zoomed)
 
