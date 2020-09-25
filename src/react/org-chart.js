@@ -28,6 +28,7 @@ class OrgChart extends PureComponent {
       zoomOutId,
       zoomExtentId,
       tree,
+      initialZoom,
       ...options
     } = this.props
 
@@ -38,6 +39,7 @@ class OrgChart extends PureComponent {
       zoomInId: zoomInId,
       zoomOutId: zoomOutId,
       zoomExtentId: zoomExtentId,
+      initialZoom: initialZoom,
       data: tree,
       ...options,
     })
