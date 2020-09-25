@@ -36,6 +36,7 @@ function init(options) {
     zoomInId,
     zoomOutId,
     zoomExtentId,
+    zoomValue,
     loadConfig,
   } = config
 
@@ -85,8 +86,22 @@ function init(options) {
     .attr('width', elemWidth)
     .attr('height', elemHeight)
 
+  var svg;
+
   // Add our base svg group to transform when a user zooms/pans
-  const svg = svgroot
+  if(config.initialZoom != null && config.initialZoom.zoomTranslate != null && config.initialZoom.zoomScale != null
+    && config.initialZoom.zoomTranslate != [] && config.initialZoom.zoomScale != 0)
+  {
+    svg = svgroot
+    .append('g')
+    .attr(
+      'transform',
+      'translate(' + config.initialZoom.zoomTranslate +')' +'scale(' + config.initialZoom.zoomScale + ')'
+    )
+  }
+  else 
+  {
+    svg = svgroot
     .append('g')
     .attr(
       'transform',
@@ -98,6 +113,7 @@ function init(options) {
         48 +
         ')'
     )
+  }
 
   // Define box shadow and avatar border radius
   defineBoxShadow(svgroot, 'boxShadow')
@@ -106,7 +122,7 @@ function init(options) {
   })
 
   // Center the viewport on initial load
-  treeData.x0 = 0
+  treeData.x0 = elemWidth / 2
   treeData.y0 = elemHeight / 2
 
   // Collapse all of the children on initial load
@@ -128,22 +144,35 @@ function init(options) {
     .on('zoom', zoomed)
 
   // Attach zoom behavior to the svg root
-  svgroot.call(zoom)
+  svgroot.call(zoom);
 
   // Define the point of origin for zoom transformations
-  zoom.translate([
-    parseInt(
-      childrenWidth + (elemWidth - childrenWidth * 2) / 2 - margin.left / 2
-    ),
-    20,
-  ])
+  if(config.initialZoom != null && config.initialZoom.zoomTranslate != null && config.initialZoom.zoomScale != null
+      && config.initialZoom.zoomTranslate != [] && config.initialZoom.zoomScale != 0)
+  {
+    zoom.translate(config.initialZoom.zoomTranslate).scale(config.initialZoom.zoomScale);
+  }
+  else {
+    zoom.translate([
+      parseInt(
+        childrenWidth + (elemWidth - childrenWidth * 2) / 2 - margin.left / 2
+      ),
+      20,
+    ])
 
+  }
+ 
   // Zoom update
   function zoomed() {
     svg.attr(
       'transform',
       'translate(' + zoom.translate() + ')' + 'scale(' + zoom.scale() + ')'
     )
+    var currentZoomValue = {
+      zoomTranslate : zoom.translate(),
+      zoomScale : zoom.scale()
+    };
+    zoomValue(currentZoomValue);
   }
 
   // To update translate and scale of zoom
