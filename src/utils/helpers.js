@@ -2,6 +2,7 @@ module.exports = {
   getTextForTitle,
   getTextForDepartment,
   getCursorForNode,
+  getInitials,
 }
 
 function getTextForTitle(datum) {
@@ -48,4 +49,15 @@ function getCursorForNode(datum) {
   return datum.children || datum._children || datum.hasChild
     ? 'pointer'
     : 'default'
+}
+
+// Takes a name and returns its initials
+function getInitials(string) {
+  let names = string.split(' ');
+  let initials = names[0].substring(0, 1).toUpperCase();
+  
+  if (names.length > 1) {
+      initials += names[names.length - 1].substring(0, 1).toUpperCase();
+  }
+  return initials;
 }
