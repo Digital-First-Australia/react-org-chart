@@ -22,9 +22,10 @@ function init(options) {
     return
   }
 
-  console.log("NVM LINK WORKING!");
+  console.log("NVM LINK WORKING!!");
 
   const {
+    guid,
     id,
     treeData,
     lineType,
@@ -75,7 +76,7 @@ function init(options) {
   const svgroot = d3
     .select(id)
     .append('svg')
-    .attr('id', 'svg')
+    .attr('id', 'svg-'+ guid)
     .attr('xmlns', 'http://www.w3.org/2000/svg')
     .attr('xmlns:xlink', 'http://www.w3.org/1999/xlink')
     .attr('x', '0px')
@@ -296,7 +297,7 @@ function init(options) {
   svgContainer.setAttribute('style', 'display:none;')
 
   //appending svg and canvas containers to root
-  const orgChart = document.getElementById('root')
+  const orgChart = document.getElementById('root-'+ guid)
   orgChart.append(canvasContainer)
   orgChart.append(svgContainer)
 }

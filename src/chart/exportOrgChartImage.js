@@ -4,7 +4,7 @@ module.exports = exportOrgChartImage
 
 function exportOrgChartImage({ loadConfig }) {
   const config = loadConfig()
-  const { id, downlowdedOrgChart, nodeLeftX, nodeRightX, nodeY } = config
+  const { id, downlowdedOrgChart, nodeLeftX, nodeRightX, nodeY, guid } = config
   var w = nodeLeftX + nodeRightX
   var h = nodeY
   var ratio = w > 9000 ? 1 : 2
@@ -26,11 +26,11 @@ function exportOrgChartImage({ loadConfig }) {
 
   // creating duplicate org chart svg from original org chart svg
   var step = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-  step.id = 'newsvg'
+  step.id = 'newsvg-' + guid;
   step.setAttribute('width', w)
   step.setAttribute('height', h)
   step.setAttribute('viewBox', `${-nodeLeftX} 0 ${w} ${h + 200}`)
-  step.innerHTML = document.getElementById('svg').innerHTML
+  step.innerHTML = document.getElementById('svg-'+ guid).innerHTML
 
   document.getElementById(`${id}-svg-container`).querySelector('svg')
     ? document

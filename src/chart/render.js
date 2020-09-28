@@ -4,6 +4,7 @@ const renderLines = require('./renderLines')
 const exportOrgChartImage = require('./exportOrgChartImage')
 const exportOrgChartPdf = require('./exportOrgChartPdf')
 const onClick = require('./onClick')
+const onParentClick = require('./onParentClick')
 const iconLink = require('./components/iconLink')
 const supervisorIcon = require('./components/supervisorIcon')
 const CHART_NODE_CLASS = 'org-chart-node'
@@ -13,8 +14,10 @@ const PERSON_TITLE_CLASS = 'org-chart-person-title'
 const PERSON_HIGHLIGHT = 'org-chart-person-highlight'
 const PERSON_REPORTS_CLASS = 'org-chart-person-reports'
 
+
 function render(config) {
   const {
+    guid,
     svgroot,
     svg,
     tree,
@@ -83,7 +86,7 @@ function render(config) {
   nodeEnter
     .append('rect')
     .attr('id', d => `coin-shadow-${d.id}`)
-    .attr('class', d => (!helpers.getTextForTitle(d) ? `empty box coin` : 'box coin'))
+    .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
     .attr('x', nodeWidth / 2 - 16)
     .attr('y', nodeHeight - 2)
     .attr('width', 32)
@@ -100,7 +103,7 @@ function render(config) {
   nodeEnter
     .append('rect')
     .attr('id', d => `coin-background-${d.id}`)
-    .attr('class', d => (!helpers.getTextForTitle(d) ? `empty box coin` : 'box coin'))
+    .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
     .attr('x', nodeWidth / 2 - 16)
     .attr('y', nodeHeight - 2)
     .attr('width', 32)
@@ -115,7 +118,7 @@ function render(config) {
   nodeEnter
     .append('text')
     .attr('id', d => `coin-text-${d.id}`)
-    .attr('class', d => (!helpers.getTextForTitle(d) ? `empty ${PERSON_REPORTS_CLASS} coin-text` : `${PERSON_REPORTS_CLASS} coin-text`))
+    .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
     .attr('x', nodeWidth / 2)
     .attr('y', nodeHeight + 7)
     .attr('dy', '.9em')
@@ -126,26 +129,6 @@ function render(config) {
     .style("text-anchor", "middle")
     .text(helpers.getTextForTitle)
     .on('click', onClick(config))
-
-  // remove all empty ones
-  d3.selectAll(".empty")
-    .remove();
-
-  // Make coin move on hover
-  /*d3.selectAll('.coin')
-    .on("mouseover",function(){
-      d3.select(this)
-        .transition()
-        .duration(100)
-        .attr('y', nodeHeight + 3);
-    })
-    .on("mouseout",function(){
-      d3.select(this)
-        .transition()
-        .duration(100)
-        .attr('y', nodeHeight - 2);
-    })*/
-  
 
 // Person Card Shadow
 nodeEnter
@@ -173,6 +156,7 @@ nodeEnter
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
   .style('cursor', 'default')
+  .on('click', d => selectCard(d.id) )
 
   const namePos = {
     x: 74,
@@ -195,7 +179,6 @@ nodeEnter
     .style('fill', nameColor)
     .style('font-size', 14)
     .text(d => d.person.name)
-  // .on('click', onParentClick(config))
 
   // Person's Title
   nodeEnter
@@ -211,6 +194,33 @@ nodeEnter
 
   const heightForTitle = 60 // getHeightForText(d.person.title)
   
+  // Person's Default Avatar
+  nodeEnter
+    .append('rect')
+    .attr('id', d => `avatar-default-${d.id}`)
+    .attr('class', 'avatar-default')
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y)
+    .attr('width', avatarWidth)
+    .attr('height', avatarWidth)
+    .attr('rx', avatarWidth / 2)
+    .attr('ry', avatarWidth / 2)
+  
+  // Default Avatar's text
+  nodeEnter
+    .append('text')
+    //.attr('class', 'avatar-default-text')
+    .attr('x', avatarPos.x + (avatarWidth / 2))
+    .attr('y', avatarPos.y + (avatarWidth / 2))
+    .attr('dy', '.35em')
+    .style('font-size', 23)
+    .style('font-weight', 400)
+    .style('cursor', 'pointer')
+    .style('fill', 'white')
+    .style('text-anchor', 'middle')
+    .style('cursor', 'default')
+    .text(d => helpers.getInitials(d.person.name)) 
+
 
   // Person's Avatar
   nodeEnter
@@ -225,32 +235,28 @@ nodeEnter
       d.person.hasImage
         ? d.person.avatar
         : loadImage(d).then(res => {
+            // get image
             covertImageToBase64(res, function(dataUrl) {
-              d3.select(`#image-${d.id}`).attr('href', dataUrl)
+              d3.select(`#image-${d.id}`)
+                .attr('href', dataUrl)
               d.person.avatar = dataUrl
             })
             d.person.hasImage = true
+
+            /* handle no image
+            if (d.person.avatar == null) {
+              d3.select(`#image-${d.id}`)
+                .classed('no-image', true)
+            }*/
             return d.person.avatar
           })
     })
     .attr('src', d => d.person.avatar)
     .attr('href', d => d.person.avatar)
     .attr('clip-path', 'url(#avatarClip)')
+    .style('cursor', 'default')
 
-  // Person's Details Button
-  /*nodeEnter
-  .append('rect')
-    .attr('width', 32)
-    .attr('height', 32)
-    .attr('x', nodeWidth - 32 - ((nodeHeight - 32) / 2))
-    .attr('y', (nodeHeight - 32) / 2)
-    .attr('fill', '#fafafa')
-    .attr('fill-opacity','0.05')
-    .attr('rx', 16)
-    .attr('ry', 16)
-    .style('cursor', helpers.getCursorForNode)*/
-
-  // Person's Link
+  // Converting to link
   const nodeLink = nodeEnter
     .append('a')
     .attr('class', PERSON_LINK_CLASS)
@@ -309,6 +315,10 @@ nodeEnter
     .attr('id', d => `arrow-${d.id}`)
     .style("stroke", titleColor)
     .style("stroke-width", 1)
+
+  // remove all empty ones
+  d3.selectAll('.remove')
+    .remove();
 
   /*nodeUpdate
     .select('rect.box')
@@ -396,5 +406,23 @@ function expandCard(id) {
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
 };
 
-module.exports = render
+function selectCard(id) {
+  const cardContainer = d3.select(`#cardcontainer-${id}`);
+  const coinCard = d3.select(`#coin-background-${id}`);
 
+  console.log("Selecting card: " + id);
+
+  // reset selected card background
+  d3.selectAll(`.selected`)
+    .classed("selected", false);
+
+  // update selected card
+  cardContainer.classed("selected", true);
+  coinCard.classed("selected", true);
+
+  //update the correct colours
+  d3.selectAll(`.selected`)
+    .classed("primary1Color", true);
+}
+
+module.exports = render

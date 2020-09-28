@@ -6,7 +6,8 @@ class OrgChart extends PureComponent {
     const { id } = this.props
 
     return createElement('div', {
-      id,
+      id: id,
+      className: 'org-chart-component'
     })
   }
 
@@ -21,6 +22,7 @@ class OrgChart extends PureComponent {
 
   componentDidMount() {
     const {
+      guid,
       id,
       downloadImageId,
       downloadPdfId,
@@ -33,6 +35,7 @@ class OrgChart extends PureComponent {
     } = this.props
 
     init({
+      guid: guid,
       id: `#${id}`,
       downloadImageId: `#${downloadImageId}`,
       downloadPdfId: `#${downloadPdfId}`,
