@@ -5,6 +5,7 @@ module.exports = exportOrgChartPdf
 function exportOrgChartPdf({ loadConfig }) {
   const config = loadConfig()
   const {
+    guid,
     id,
     downlowdedOrgChart,
     nodeLeftX,
@@ -58,11 +59,11 @@ function exportOrgChartPdf({ loadConfig }) {
 
   // creating duplicate org chart svg from original org chart svg
   var step = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-  step.id = 'newsvg'
+  step.id = 'newsvg-' + guid;
   step.setAttribute('width', svgWidth)
   step.setAttribute('height', svgHeight)
   step.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
-  step.innerHTML = document.getElementById('svg').innerHTML
+  step.innerHTML = document.getElementById('svg-' + guid).innerHTML
 
   document.getElementById(`${id}-svg-container`).querySelector('svg')
     ? document

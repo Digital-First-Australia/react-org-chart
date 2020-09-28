@@ -15,6 +15,7 @@ const PERSON_REPORTS_CLASS = 'org-chart-person-reports'
 
 function render(config) {
   const {
+    guid,
     svgroot,
     svg,
     tree,
