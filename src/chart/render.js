@@ -82,18 +82,23 @@ function render(config) {
     .attr('class', CHART_NODE_CLASS)
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
 
+
+  const coinWidth = 32
+  const coinX = nodeWidth / 2 - (coinWidth / 2)
+  const coinY = nodeHeight + 7
+
   // Person's Coin Background Card's Shadow
   nodeEnter
     .append('rect')
     .attr('id', d => `coin-shadow-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', nodeHeight - 2)
-    .attr('width', 32)
-    .attr('height', 32)
+    .attr('x', coinX)
+    .attr('y', coinY)
+    .attr('width', coinWidth)
+    .attr('height', coinWidth)
     .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
+    .attr('rx', coinWidth / 2)
+    .attr('ry', coinWidth / 2)
     .attr('fill-opacity', 0.13)
     .attr('stroke-opacity', 0)
     .attr('filter', 'url(#boxShadow)')
@@ -104,13 +109,13 @@ function render(config) {
     .append('rect')
     .attr('id', d => `coin-background-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', nodeHeight - 2)
-    .attr('width', 32)
-    .attr('height', 32)
+    .attr('x', coinX)
+    .attr('y', coinY)
+    .attr('width', coinWidth)
+    .attr('height', coinWidth)
     .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
+    .attr('rx', coinWidth / 2)
+    .attr('ry', coinWidth / 2)
     .style('cursor', helpers.getCursorForNode)
     .on('click', onClick(config))
 
@@ -120,7 +125,7 @@ function render(config) {
     .attr('id', d => `coin-text-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
     .attr('x', nodeWidth / 2)
-    .attr('y', nodeHeight + 7)
+    .attr('y', coinY + 9)
     .attr('dy', '.9em')
     .style('font-size', 13)
     .style('font-weight', 400)
