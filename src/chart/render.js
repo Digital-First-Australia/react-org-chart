@@ -52,14 +52,21 @@ function render(config) {
   config.links = links
   config.nodes = nodes
 
-  // Normalize for fixed-depth.
   nodes.forEach(function(d) {
+    // Normalize for fixed-depth.
     d.y = d.depth * lineDepthY
     
     // Instantiate local variables for coin locations
-    d.isOpen = (d.isOpen === undefined) ? false : d.isOpen;
     d.coinYnormal = nodeHeight - 8;
     d.coinYexpanded = nodeHeight + 7;
+
+    if (d.isOpen === undefined) {
+      if (!d.hasParent) {
+        d.isOpen = true; // top node starts expanded
+      } else {
+        d.isOpen = false;
+      }
+    }
   })
 
   // Update the nodes
