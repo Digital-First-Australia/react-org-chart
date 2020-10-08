@@ -56,7 +56,7 @@ function render(config) {
   nodes.forEach(function(d) {
     d.y = d.depth * lineDepthY
     
-    // Instantiate isOpen variable
+    // Instantiate local variables for coin locations
     d.isOpen = (d.isOpen === undefined) ? false : d.isOpen;
     d.coinYnormal = nodeHeight - 8;
     d.coinYexpanded = nodeHeight + 7;
@@ -95,6 +95,8 @@ function render(config) {
 
   let coinWidth = 32;
   let coinX = nodeWidth / 2 - (coinWidth / 2);
+  let coinHoverTransitionDuration = 200;
+  let coinYhover = nodeHeight - 3;
 
   // Person's Coin Background Card's Shadow
   nodeEnter
@@ -112,6 +114,9 @@ function render(config) {
     .attr('stroke-opacity', 0)
     .attr('filter', 'url(#boxShadow)')
     .style('cursor', helpers.getCursorForNode)
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
+    
 
   // Person's Coin Background Card
   nodeEnter
@@ -127,6 +132,8 @@ function render(config) {
     .attr('ry', coinWidth / 2)
     .style('cursor', helpers.getCursorForNode)
     .on('click', onClick(config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // Person's Coin Text
   nodeEnter
@@ -143,6 +150,8 @@ function render(config) {
     .style("text-anchor", "middle")
     .text(d => d.isOpen ? '-' : helpers.getTextForTitle(d))
     .on('click', onClick(config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 // Person Card Shadow
 nodeEnter
@@ -419,6 +428,25 @@ function expandCard(id) {
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
 };
+
+function coinHoverMove(d, coinYnew) {
+  let transitionDuration = 200;
+  
+  if (!d.isOpen) {
+    d3.select(`#coin-background-${d.id}`)
+      .transition()
+      .duration(transitionDuration)
+      .attr('y', coinYnew);
+    d3.select(`#coin-shadow-${d.id}`)
+      .transition()
+      .duration(transitionDuration)
+      .attr('y', coinYnew);
+    d3.select(`#coin-text-${d.id}`)
+      .transition()
+      .duration(transitionDuration)
+      .attr('y', coinYnew + 9);
+  }
+}
 
 function selectCard(id) {
   const cardContainer = d3.select(`#cardcontainer-${id}`);
