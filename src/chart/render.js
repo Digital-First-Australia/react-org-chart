@@ -135,13 +135,13 @@ function render(config) {
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
     .attr('x', nodeWidth / 2)
     .attr('y', d => d.isOpen ? d.coinYexpanded + 9 : d.coinYnormal + 9)
-    .attr('dy', '.9em')
-    .style('font-size', 13)
+    .attr('dy', d => d.isOpen ? '.6em' : '.9em')
+    .style('font-size', d => d.isOpen ? 25 : 13)
     .style('font-weight', 400)
     .style('cursor', 'pointer')
     .style('fill', reportsColor)
     .style("text-anchor", "middle")
-    .text(helpers.getTextForTitle)
+    .text(d => d.isOpen ? '-' : helpers.getTextForTitle(d))
     .on('click', onClick(config))
 
 // Person Card Shadow
