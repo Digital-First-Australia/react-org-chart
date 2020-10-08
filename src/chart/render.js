@@ -55,6 +55,11 @@ function render(config) {
   // Normalize for fixed-depth.
   nodes.forEach(function(d) {
     d.y = d.depth * lineDepthY
+    
+    // Instantiate isOpen variable
+    d.isOpen = (d.isOpen === undefined) ? false : d.isOpen;
+    d.coinYnormal = nodeHeight - 8;
+    d.coinYexpanded = nodeHeight + 7;
   })
 
   // Update the nodes
@@ -82,10 +87,14 @@ function render(config) {
     .attr('class', CHART_NODE_CLASS)
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
 
+  console.log(nodeEnter);
 
-  const coinWidth = 32
+  /*const coinWidth = 32
   const coinX = nodeWidth / 2 - (coinWidth / 2)
-  const coinY = nodeHeight + 7
+  const coinY = nodeHeight - 8*/
+
+  let coinWidth = 32;
+  let coinX = nodeWidth / 2 - (coinWidth / 2);
 
   // Person's Coin Background Card's Shadow
   nodeEnter
@@ -93,7 +102,7 @@ function render(config) {
     .attr('id', d => `coin-shadow-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
     .attr('x', coinX)
-    .attr('y', coinY)
+    .attr('y', d => d.isOpen ? d.coinYexpanded : d.coinYnormal)
     .attr('width', coinWidth)
     .attr('height', coinWidth)
     .attr('fill', backgroundColor)
@@ -110,7 +119,7 @@ function render(config) {
     .attr('id', d => `coin-background-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
     .attr('x', coinX)
-    .attr('y', coinY)
+    .attr('y', d => d.isOpen ? d.coinYexpanded : d.coinYnormal)
     .attr('width', coinWidth)
     .attr('height', coinWidth)
     .attr('fill', backgroundColor)
@@ -125,7 +134,7 @@ function render(config) {
     .attr('id', d => `coin-text-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
     .attr('x', nodeWidth / 2)
-    .attr('y', coinY + 9)
+    .attr('y', d => d.isOpen ? d.coinYexpanded + 9 : d.coinYnormal + 9)
     .attr('dy', '.9em')
     .style('font-size', 13)
     .style('font-weight', 400)
@@ -161,7 +170,7 @@ nodeEnter
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
   .style('cursor', 'default')
-  .on('click', d => selectCard(d.id) )
+  .on('click', d => selectCard(d.id))
 
   const namePos = {
     x: 74,

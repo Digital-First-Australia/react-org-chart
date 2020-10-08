@@ -8,6 +8,9 @@ function onClick(configOnClick) {
 
   return datum => {
     
+    console.log("isOpen: " + datum.isOpen);
+    console.log(datum);
+
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
     const { loadChildren, render, onPersonClick } = config
@@ -34,6 +37,17 @@ function onClick(configOnClick) {
         return
       }
 
+      // change coin text
+      d3.select(`#coin-text-${datum.id}`)
+        .text('-')
+        .style("font-size", "25")
+        .attr('dy', '.6em');
+
+      // move coin down
+      datum.isOpen = true;
+      d3.selectAll(`#coin-background-${datum.id}, #coin-shadow-${datum.id}`)
+        .attr('y', datum.coinYexpanded)
+
       const result = loadChildren(datum)
       const handler = handleChildrenResult(config, datum)
 
@@ -57,7 +71,13 @@ function onClick(configOnClick) {
         .text(helpers.getTextForTitle(datum))
         .style("font-size", "13")
         .attr('dy', '.9em');
-    } else {
+
+      // move coin up
+      datum.isOpen = false;
+      d3.selectAll(`#coin-background-${datum.id}, #coin-shadow-${datum.id}`)
+        .attr('y', datum.coinYnormal)
+    
+      } else {
       // Expand the children
       config.callerNode = datum
       config.callerMode = 1
@@ -69,6 +89,11 @@ function onClick(configOnClick) {
         .text('-')
         .style("font-size", "25")
         .attr('dy', '.6em');
+
+      // move coin down
+      datum.isOpen = true;
+      d3.selectAll(`#coin-background-${datum.id}, #coin-shadow-${datum.id}, #coin-text-${datum.id}`)
+        .attr('y', datum.coinYexpanded)
     }
 
     // Pass in the clicked datum as the sourceNode which
@@ -79,6 +104,8 @@ function onClick(configOnClick) {
     })
   }
 }
+
+
 
 function handleChildrenResult(config, datum) {
   const { tree, render } = config
