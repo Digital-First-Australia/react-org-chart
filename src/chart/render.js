@@ -160,6 +160,9 @@ function render(config) {
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
+
+
+
 // Person Card Shadow
 nodeEnter
   .append('rect')
@@ -173,6 +176,8 @@ nodeEnter
   .attr('stroke-opacity', 0)
   .attr('filter', 'url(#boxShadow)')
   .attr('isExpanded', 'false')
+  .on('mouseover', d => coinHoverMove(d, coinYhover))
+  .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 // Person Card Container
 nodeEnter
@@ -186,7 +191,9 @@ nodeEnter
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
   .style('cursor', 'default')
-  .on('click', d => selectCard(d.id))
+  .on('click', d => selectCard(d, backgroundColor))
+  .on('mouseover', d => coinHoverMove(d, coinYhover))
+  .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   const namePos = {
     x: 74,
@@ -209,6 +216,9 @@ nodeEnter
     .style('fill', nameColor)
     .style('font-size', 14)
     .text(d => d.person.name)
+    .on('click', d => selectCard(d, backgroundColor))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // Person's Title
   nodeEnter
@@ -221,6 +231,9 @@ nodeEnter
     .style('cursor', 'default')
     .style('fill', titleColor)
     .text(d => d.person.title)
+    .on('click', d => selectCard(d, backgroundColor))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   const heightForTitle = 60 // getHeightForText(d.person.title)
   
@@ -235,6 +248,9 @@ nodeEnter
     .attr('height', avatarWidth)
     .attr('rx', avatarWidth / 2)
     .attr('ry', avatarWidth / 2)
+    .on('click', d => selectCard(d, backgroundColor))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
   
   // Default Avatar's text
   nodeEnter
@@ -249,7 +265,10 @@ nodeEnter
     .style('fill', 'white')
     .style('text-anchor', 'middle')
     .style('cursor', 'default')
-    .text(d => helpers.getInitials(d.person.name)) 
+    .text(d => helpers.getInitials(d.person.name))
+    .on('click', d => selectCard(d, backgroundColor))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 
   // Person's Avatar
@@ -285,6 +304,9 @@ nodeEnter
     .attr('href', d => d.person.avatar)
     .attr('clip-path', 'url(#avatarClip)')
     .style('cursor', 'default')
+    .on('click', d => selectCard(d, backgroundColor))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // Converting to link
   const nodeLink = nodeEnter
@@ -324,6 +346,8 @@ nodeEnter
     .attr('id', d => `expand-${d.id}`)
     .style('cursor', helpers.getCursorForNode)
     .on('click', d => expandCard(d.id) )
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // SVG arrows on employee node expansion button
   nodeEnter
@@ -455,23 +479,38 @@ function coinHoverMove(d, coinYnew) {
   }
 }
 
-function selectCard(id) {
-  const cardContainer = d3.select(`#cardcontainer-${id}`);
-  const coinCard = d3.select(`#coin-background-${id}`);
+function selectCard(d, backgroundColor) {
+  const cardContainer = d3.select(`#cardcontainer-${d.id}`);
+  const coinCard = d3.select(`#coin-background-${d.id}`);
 
-  console.log("Selecting card: " + id);
+  console.log("Selecting card: " + d.id);
 
   // reset selected card background
   d3.selectAll(`.selected`)
-    .classed("selected", false);
+    .attr('fill', backgroundColor)
+    .classed("selected", false)
+    .classed("accent1Color", false)
+    .classed("accent2Color", false);
 
   // update selected card
-  cardContainer.classed("selected", true);
-  coinCard.classed("selected", true);
+  cardContainer
+    .classed("selected", true)
+    .classed("accent1Color", true);
+  coinCard
+    .classed("selected", true)
+    .classed("accent1Color", true);
 
-  //update the correct colours
-  d3.selectAll(`.selected`)
-    .classed("primary1Color", true);
+  // update children color as well
+  if (d.children) {
+    d.children.forEach(function (datum) {
+      d3.select(`#cardcontainer-${datum.id}`)
+        .classed("selected", true)
+        .classed("accent2Color", true);
+      d3.select(`#coin-background-${datum.id}`)
+        .classed("selected", true)
+        .classed("accent2Color", true);
+    })
+  }
 }
 
 module.exports = render
