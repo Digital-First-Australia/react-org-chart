@@ -7,9 +7,6 @@ function onClick(configOnClick) {
   const { loadConfig } = configOnClick
 
   return datum => {
-    
-    console.log("isOpen: " + datum.isOpen);
-    console.log(datum);
 
     if (d3.event.defaultPrevented) return
     const config = loadConfig()

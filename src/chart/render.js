@@ -94,8 +94,6 @@ function render(config) {
     .attr('class', CHART_NODE_CLASS)
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
 
-  console.log(nodeEnter);
-
   /*const coinWidth = 32
   const coinX = nodeWidth / 2 - (coinWidth / 2)
   const coinY = nodeHeight - 8*/
@@ -182,10 +180,19 @@ nodeEnter
 // Person Card Container
 nodeEnter
   .append('rect')
-  .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
+  .attr('id', d => `cardcontainer-${d.id}`)
+  .attr('class', 
+    function(d) {
+      
+      // check parent is selected
+      if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("accent1Color")) {
+        return 'accent2Color selected box';
+      } else {
+        return 'box';
+      }
+    })
   .attr('width', nodeWidth)
   .attr('height', nodeHeight)
-  .attr('id', d => `cardcontainer-${d.id}`)
   .attr('fill', backgroundColor)
   .attr('rx', nodeBorderRadius)
   .attr('ry', nodeBorderRadius)
@@ -482,8 +489,6 @@ function coinHoverMove(d, coinYnew) {
 function selectCard(d, backgroundColor) {
   const cardContainer = d3.select(`#cardcontainer-${d.id}`);
   const coinCard = d3.select(`#coin-background-${d.id}`);
-
-  console.log("Selecting card: " + d.id);
 
   // reset selected card background
   d3.selectAll(`.selected`)
