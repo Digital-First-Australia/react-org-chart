@@ -126,7 +126,7 @@ function render(config) {
     .style('font-weight', 400)
     .style('cursor', 'pointer')
     .style('fill', reportsColor)
-    .style("text-anchor", "middle")
+    .style('text-anchor', 'middle')
     .text(helpers.getTextForTitle)
     .on('click', onClick(config))
 
@@ -205,6 +205,46 @@ nodeEnter
     .attr('height', avatarWidth)
     .attr('rx', avatarWidth / 2)
     .attr('ry', avatarWidth / 2)
+
+    // Person's department
+    nodeEnter
+    .append('text')
+    .attr('id', d => `person-department-${d.id}`)
+    .attr('x', namePos.x)
+    .attr('y', namePos.y + 71)
+    .attr('dy', '.3em')
+    .style('cursor', 'default')
+    .style('fill', nameColor)
+    .style('font-size', 14)
+    .style('display', 'none')
+    .text(d => d.person.department)
+
+    // Person's about me
+    nodeEnter
+    .append('text')
+    .attr('id', d => `person-about-me-${d.id}`)
+    .attr('x', namePos.x)
+    .attr('y', namePos.y + 80)
+    .attr('dy', '.3em')
+    .style('cursor', 'default')
+    .style('fill', nameColor)
+    .style('font-size', 14)
+    .style('display', 'none')
+    .text(d => d.person.aboutMe)
+
+    // Person's mobile number
+    nodeEnter
+    .append('text')
+    .attr('id', d => `person-mobile-number-${d.id}`)
+    .attr('x', namePos.x)
+    .attr('y', namePos.y + 89)
+    .attr('dy', '.3em')
+    .style('cursor', 'default')
+    .style('fill', nameColor)
+    .style('font-size', 14)
+    .style('display', 'none')
+    .text(d => d.person.mobileNumber)
+
   
   // Default Avatar's text
   nodeEnter
@@ -255,6 +295,7 @@ nodeEnter
     .attr('href', d => d.person.avatar)
     .attr('clip-path', 'url(#avatarClip)')
     .style('cursor', 'default')
+
 
   // Converting to link
   const nodeLink = nodeEnter
@@ -378,6 +419,10 @@ function expandCard(id) {
   const arrow = d3.selectAll(`#arrow-${id}`)
   const isExpanded = card.attr('isExpanded') == 'true' && cardcontainer.attr('isExpanded') == 'true'
 
+  const department = d3.select(`#person-department-${id}`)
+  const mobile = d3.select(`#person-mobile-number-${id}`)
+  const aboutMe = d3.select(`#person-about-me-${id}`)
+
   if(isExpanded) {
     card
       .transition()
@@ -389,6 +434,10 @@ function expandCard(id) {
       .attr('height', 71)
     arrow.attr('y1', 32)
     arrow.attr('y2', 38)
+
+    department.style('display', 'none')
+    mobile.style('display', 'none')
+    aboutMe.style('display', 'none')
   }
   else {
     card
@@ -401,6 +450,10 @@ function expandCard(id) {
       .attr('height', 247)
     arrow.attr('y2', 31)
     arrow.attr('y1', 37)
+    department.style('display', 'inline')
+    mobile.style('display', 'inline')
+    aboutMe.style('display', 'inline')
+
   }
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
