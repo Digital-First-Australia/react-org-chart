@@ -134,7 +134,7 @@ function render(config) {
     .attr('y', d => d.isOpen ? d.coinYexpanded : d.coinYnormal)
     .attr('width', coinWidth)
     .attr('height', coinWidth)
-    .attr('fill', accentColor2) //TODO: backgroundColor
+    .attr('fill', backgroundColor)
     .attr('rx', coinWidth / 2)
     .attr('ry', coinWidth / 2)
     .style('cursor', helpers.getCursorForNode)
@@ -187,20 +187,28 @@ nodeEnter
     function(d) {
       
       // check parent is selected
-      if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("accent1Color")) {
-        return 'accent2Color selected box';
+      if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
+        return 'selected2 box';
       } else {
         return 'box';
       }
     })
   .attr('width', nodeWidth)
   .attr('height', nodeHeight)
-  .attr('fill', accentColor1) //TODO: change to backgroundColor
+  .attr('fill', function(d) {
+      
+    // check parent is selected
+    if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
+      return accentColor2;
+    } else {
+      return backgroundColor;
+    }
+  })
   .attr('rx', nodeBorderRadius)
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
   .style('cursor', 'default')
-  .on('click', d => selectCard(d, backgroundColor))
+  .on('click', d => selectCard(d, config))
   .on('mouseover', d => coinHoverMove(d, coinYhover))
   .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
@@ -225,7 +233,7 @@ nodeEnter
     .style('fill', nameColor)
     .style('font-size', 14)
     .text(d => d.person.name)
-    .on('click', d => selectCard(d, backgroundColor))
+    .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
@@ -240,7 +248,7 @@ nodeEnter
     .style('cursor', 'default')
     .style('fill', titleColor)
     .text(d => d.person.title)
-    .on('click', d => selectCard(d, backgroundColor))
+    .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
@@ -257,7 +265,7 @@ nodeEnter
     .attr('height', avatarWidth)
     .attr('rx', avatarWidth / 2)
     .attr('ry', avatarWidth / 2)
-    .on('click', d => selectCard(d, backgroundColor))
+    .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
   
@@ -275,7 +283,7 @@ nodeEnter
     .style('text-anchor', 'middle')
     .style('cursor', 'default')
     .text(d => helpers.getInitials(d.person.name))
-    .on('click', d => selectCard(d, backgroundColor))
+    .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
@@ -301,11 +309,6 @@ nodeEnter
             })
             d.person.hasImage = true
 
-            /* handle no image
-            if (d.person.avatar == null) {
-              d3.select(`#image-${d.id}`)
-                .classed('no-image', true)
-            }*/
             return d.person.avatar
           })
     })
@@ -313,7 +316,7 @@ nodeEnter
     .attr('href', d => d.person.avatar)
     .attr('clip-path', 'url(#avatarClip)')
     .style('cursor', 'default')
-    .on('click', d => selectCard(d, backgroundColor))
+    .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
@@ -488,34 +491,33 @@ function coinHoverMove(d, coinYnew) {
   }
 }
 
-function selectCard(d, backgroundColor) {
+function selectCard(d, config) {
   const cardContainer = d3.select(`#cardcontainer-${d.id}`);
   const coinCard = d3.select(`#coin-background-${d.id}`);
 
   // reset selected card background
-  d3.selectAll(`.selected`)
-    .attr('fill', backgroundColor)
-    .classed("selected", false)
-    .classed("accent1Color", false)
-    .classed("accent2Color", false);
+  d3.selectAll(`.selected1, .selected2`)
+    .attr('fill', config.backgroundColor)
+    .classed("selected1", false)
+    .classed("selected2", false);
 
   // update selected card
   cardContainer
-    .classed("selected", true)
-    .classed("accent1Color", true);
+    .attr('fill', config.accentColor1)
+    .classed("selected1", true);
   coinCard
-    .classed("selected", true)
-    .classed("accent1Color", true);
+    .attr('fill', config.accentColor1)
+    .classed("selected1", true);
 
   // update children color as well
   if (d.children) {
     d.children.forEach(function (datum) {
       d3.select(`#cardcontainer-${datum.id}`)
-        .classed("selected", true)
-        .classed("accent2Color", true);
+        .attr('fill', config.accentColor2)
+        .classed("selected2", true);
       d3.select(`#coin-background-${datum.id}`)
-        .classed("selected", true)
-        .classed("accent2Color", true);
+        .attr('fill', config.accentColor2)
+        .classed("selected2", true);
     })
   }
 }
