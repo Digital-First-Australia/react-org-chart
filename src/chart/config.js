@@ -26,6 +26,8 @@ const borderColor = '#fff'
 const nameColor = '#201F1E'
 const titleColor = '#605E5C'
 const reportsColor = '#92A0AD'
+const accentColor1 = '#D7E1F4'
+const accentColor2 = '#F1F5FB'
 
 const config = {
   margin,
@@ -43,6 +45,8 @@ const config = {
   borderColor,
   nameColor,
   titleColor,
+  accentColor1,
+  accentColor2,
   reportsColor,
   shouldResize,
 }

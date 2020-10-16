@@ -27,6 +27,8 @@ function render(config) {
     nodePaddingX,
     nodePaddingY,
     nodeBorderRadius,
+    accentColor1,
+    accentColor2,
     backgroundColor,
     nameColor,
     titleColor,
@@ -132,7 +134,7 @@ function render(config) {
     .attr('y', d => d.isOpen ? d.coinYexpanded : d.coinYnormal)
     .attr('width', coinWidth)
     .attr('height', coinWidth)
-    .attr('fill', backgroundColor)
+    .attr('fill', accentColor2) //TODO: backgroundColor
     .attr('rx', coinWidth / 2)
     .attr('ry', coinWidth / 2)
     .style('cursor', helpers.getCursorForNode)
@@ -193,7 +195,7 @@ nodeEnter
     })
   .attr('width', nodeWidth)
   .attr('height', nodeHeight)
-  .attr('fill', backgroundColor)
+  .attr('fill', accentColor1) //TODO: change to backgroundColor
   .attr('rx', nodeBorderRadius)
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
@@ -379,7 +381,7 @@ nodeEnter
 
   // remove all empty ones
   d3.selectAll('.remove')
-    .remove();
+    .remove(); //TODO: This might not work if there aren't any to remove
 
   /*nodeUpdate
     .select('rect.box')
