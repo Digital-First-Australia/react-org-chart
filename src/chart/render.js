@@ -82,6 +82,56 @@ function render(config) {
     .attr('class', CHART_NODE_CLASS)
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
 
+
+  // Topmost get parent Background Card's Shadow
+  nodeEnter
+    .append('rect')
+    .attr('id', d => `get-parent-shadow-${d.id}`)
+    .attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
+    .attr('x', nodeWidth / 2 - 16)
+    .attr('y', -30)
+    .attr('width', 32)
+    .attr('height', 32)
+    .attr('fill', backgroundColor)
+    .attr('rx', 16)
+    .attr('ry', 16)
+    .attr('fill-opacity', 0.13)
+    .attr('stroke-opacity', 0)
+    .attr('filter', 'url(#boxShadow)')
+    .style('cursor', helpers.getCursorForNode)
+
+  // Topmost get parent Background Card
+  nodeEnter
+    .append('rect')
+    .attr('id', d => `get-parent-background-${d.id}`)
+    .attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
+    .attr('x', nodeWidth / 2 - 16)
+    .attr('y', -30)
+    .attr('width', 32)
+    .attr('height', 32)
+    .attr('fill', backgroundColor)
+    .attr('rx', 16)
+    .attr('ry', 16)
+    .style('cursor', helpers.getCursorForNode)
+    .on('click', d => onParentClick(config, d))
+
+  // Topmost get parent coin Text
+  nodeEnter
+    .append('text')
+    .attr('id', d => `get-parent-text-${d.id}`)
+    .attr('class', d => (d.hasParent ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
+    .attr('x', nodeWidth / 2)
+    .attr('y', -21)
+    .attr('dy', '.7em')
+    .style('font-size', 20)
+    .style('font-weight', 400)
+    .style('cursor', 'pointer')
+    .style('fill', reportsColor)
+    .style('text-anchor', 'middle')
+    .text("+")
+    .on('click', d => onParentClick(config, d))
+
+
   // Person's Coin Background Card's Shadow
   nodeEnter
     .append('rect')
