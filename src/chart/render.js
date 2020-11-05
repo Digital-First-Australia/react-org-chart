@@ -104,40 +104,46 @@ function render(config) {
 
   let coinWidth = 32;
   let coinX = nodeWidth / 2 - (coinWidth / 2);
-  let coinHoverTransitionDuration = 200;
   let coinYhover = nodeHeight - 3;
+
+  let parentCoinYhover = 3 - coinWidth;
+  let parentCoinYnormal = 8 - coinWidth;
 
   // Topmost get parent Background Card's Shadow
   nodeEnter
     .append('rect')
     .attr('id', d => `get-parent-shadow-${d.id}`)
     .attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', -30)
-    .attr('width', 32)
-    .attr('height', 32)
+    .attr('x', nodeWidth / 2 - (coinWidth / 2))
+    .attr('y', parentCoinYnormal)
+    .attr('width', coinWidth)
+    .attr('height', coinWidth)
     .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
+    .attr('rx', coinWidth / 2)
+    .attr('ry', coinWidth / 2)
     .attr('fill-opacity', 0.13)
     .attr('stroke-opacity', 0)
     .attr('filter', 'url(#boxShadow)')
     .style('cursor', helpers.getCursorForNode)
+    .on('mouseover', d => parentCoinHoverMove(d, parentCoinYhover))
+    .on('mouseout', d => parentCoinHoverMove(d, parentCoinYnormal))
 
   // Topmost get parent Background Card
   nodeEnter
     .append('rect')
     .attr('id', d => `get-parent-background-${d.id}`)
     .attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', -30)
-    .attr('width', 32)
-    .attr('height', 32)
+    .attr('x', nodeWidth / 2 - (coinWidth / 2))
+    .attr('y', parentCoinYnormal)
+    .attr('width', coinWidth)
+    .attr('height', coinWidth)
     .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
+    .attr('rx', coinWidth / 2)
+    .attr('ry', coinWidth / 2)
     .style('cursor', helpers.getCursorForNode)
     .on('click', d => onParentClick(config, d))
+    .on('mouseover', d => parentCoinHoverMove(d, parentCoinYhover))
+    .on('mouseout', d => parentCoinHoverMove(d, parentCoinYnormal))
 
   // Topmost get parent coin Text
   nodeEnter
@@ -145,7 +151,7 @@ function render(config) {
     .attr('id', d => `get-parent-text-${d.id}`)
     .attr('class', d => (d.hasParent ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
     .attr('x', nodeWidth / 2)
-    .attr('y', -21)
+    .attr('y', parentCoinYnormal + 9)
     .attr('dy', '.7em')
     .style('font-size', 20)
     .style('font-weight', 400)
@@ -154,7 +160,8 @@ function render(config) {
     .style('text-anchor', 'middle')
     .text("+")
     .on('click', d => onParentClick(config, d))
-
+    .on('mouseover', d => parentCoinHoverMove(d, parentCoinYhover))
+    .on('mouseout', d => parentCoinHoverMove(d, parentCoinYnormal))
 
   // Person's Coin Background Card's Shadow
   nodeEnter
@@ -593,9 +600,29 @@ function coinHoverMove(d, coinYnew) {
   }
 }
 
+function parentCoinHoverMove(d, parentCoinYnew) {
+  let transitionDuration = 200;
+  
+  d3.select(`#get-parent-background-${d.id}`)
+    .transition()
+    .duration(transitionDuration)
+    .attr('y', parentCoinYnew);
+  d3.select(`#get-parent-shadow-${d.id}`)
+    .transition()
+    .duration(transitionDuration)
+    .attr('y', parentCoinYnew);
+  d3.select(`#get-parent-text-${d.id}`)
+    .transition()
+    .duration(transitionDuration)
+    .attr('y', parentCoinYnew + 9);
+}
+
 function selectCard(d, config) {
   const cardContainer = d3.select(`#cardcontainer-${d.id}`);
   const coinCard = d3.select(`#coin-background-${d.id}`);
+
+  console.log("Selecting card:")
+  console.log(d);
 
   // reset selected card background
   d3.selectAll(`.selected1, .selected2`)

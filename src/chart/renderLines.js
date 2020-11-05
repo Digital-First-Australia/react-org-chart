@@ -47,6 +47,9 @@ function renderLines(config = {}) {
       .attr('stroke-opacity', 0.3)
       .attr('stroke-width', 1.5)
       .attr('d', d => {
+        console.log("d.source");
+        console.log(d.source);
+        
         /* Where line points start :) */
         const linePoints = [
           {

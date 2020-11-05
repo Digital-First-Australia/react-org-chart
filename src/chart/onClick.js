@@ -8,6 +8,9 @@ function onClick(configOnClick) {
 
   return datum => {
 
+    console.log("Datum")
+    console.log(datum);
+
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
     const { loadChildren, render, onPersonClick } = config
@@ -18,6 +21,7 @@ function onClick(configOnClick) {
       // If the `onPersonClick` handler returns `false`
       // Cancel the rest of this click handler
       if (typeof result === 'boolean' && !result) {
+        console.log("Returned false!")
         return
       }
     }
@@ -41,8 +45,10 @@ function onClick(configOnClick) {
 
       // Check if the result is a promise and render the children
       if (result.then) {
+        console.log("Returning result.then(handler)")
         return result.then(handler)
       } else {
+        console.log("Returning handler(result)")
         return handler(result)
       }
     }
@@ -65,6 +71,9 @@ function onClick(configOnClick) {
 
       moveCoinDown(datum);
     }
+
+    console.log("Datum at end:")
+    console.log(datum);
 
     // Pass in the clicked datum as the sourceNode which
     // tells the child nodes where to animate in from
@@ -127,6 +136,9 @@ function handleChildrenResult(config, datum) {
   const { tree, render } = config
 
   return children => {
+    
+    console.log("Handling Children Result")
+    
     const result = {
       ...datum,
       children,
