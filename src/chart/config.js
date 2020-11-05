@@ -4,21 +4,21 @@ const shouldResize = true
 // Nodes
 const nodeWidth = 288
 const nodeHeight = 71
-const nodeSpacing = 12
+const nodeSpacing = 15 // padding around outside of each node
 const nodePaddingX = 16
 const nodePaddingY = 16
 const avatarWidth = 48
 const nodeBorderRadius = 6
 const margin = {
-  top: 13,
-  right: 13,
-  bottom: 13,
-  left: 13,
+  top: 23,
+  right: 23,
+  bottom: 23,
+  left: 23,
 }
 
 // Lines
 const lineType = 'angle'
-const lineDepthY = 120 /* Height of the line for child nodes */
+const lineDepthY = nodeHeight + 46 /* Height of the line for child nodes */
 
 // Colors
 const backgroundColor = '#fff'
@@ -26,6 +26,8 @@ const borderColor = '#fff'
 const nameColor = '#201F1E'
 const titleColor = '#605E5C'
 const reportsColor = '#92A0AD'
+const accentColor1 = '#D7E1F4'
+const accentColor2 = '#F1F5FB'
 
 const config = {
   margin,
@@ -43,6 +45,8 @@ const config = {
   borderColor,
   nameColor,
   titleColor,
+  accentColor1,
+  accentColor2,
   reportsColor,
   shouldResize,
 }

@@ -27,6 +27,8 @@ function render(config) {
     nodePaddingX,
     nodePaddingY,
     nodeBorderRadius,
+    accentColor1,
+    accentColor2,
     backgroundColor,
     nameColor,
     titleColor,
@@ -52,9 +54,21 @@ function render(config) {
   config.links = links
   config.nodes = nodes
 
-  // Normalize for fixed-depth.
   nodes.forEach(function(d) {
+    // Normalize for fixed-depth.
     d.y = d.depth * lineDepthY
+    
+    // Instantiate local variables for coin locations
+    d.coinYnormal = nodeHeight - 8;
+    d.coinYexpanded = nodeHeight + 7;
+
+    if (d.isOpen === undefined) {
+      if (!d.hasParent) {
+        d.isOpen = true; // top node starts expanded
+      } else {
+        d.isOpen = false;
+      }
+    }
   })
 
   // Update the nodes
@@ -82,37 +96,51 @@ function render(config) {
     .attr('class', CHART_NODE_CLASS)
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
 
+  /*const coinWidth = 32
+  const coinX = nodeWidth / 2 - (coinWidth / 2)
+  const coinY = nodeHeight - 8*/
+
+  let coinWidth = 32;
+  let coinX = nodeWidth / 2 - (coinWidth / 2);
+  let coinHoverTransitionDuration = 200;
+  let coinYhover = nodeHeight - 3;
+
   // Person's Coin Background Card's Shadow
   nodeEnter
     .append('rect')
     .attr('id', d => `coin-shadow-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', nodeHeight - 2)
-    .attr('width', 32)
-    .attr('height', 32)
+    .attr('x', coinX)
+    .attr('y', d => d.isOpen ? d.coinYexpanded : d.coinYnormal)
+    .attr('width', coinWidth)
+    .attr('height', coinWidth)
     .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
+    .attr('rx', coinWidth / 2)
+    .attr('ry', coinWidth / 2)
     .attr('fill-opacity', 0.13)
     .attr('stroke-opacity', 0)
     .attr('filter', 'url(#boxShadow)')
     .style('cursor', helpers.getCursorForNode)
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
+    
 
   // Person's Coin Background Card
   nodeEnter
     .append('rect')
     .attr('id', d => `coin-background-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
-    .attr('x', nodeWidth / 2 - 16)
-    .attr('y', nodeHeight - 2)
-    .attr('width', 32)
-    .attr('height', 32)
+    .attr('x', coinX)
+    .attr('y', d => d.isOpen ? d.coinYexpanded : d.coinYnormal)
+    .attr('width', coinWidth)
+    .attr('height', coinWidth)
     .attr('fill', backgroundColor)
-    .attr('rx', 16)
-    .attr('ry', 16)
+    .attr('rx', coinWidth / 2)
+    .attr('ry', coinWidth / 2)
     .style('cursor', helpers.getCursorForNode)
     .on('click', onClick(config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // Person's Coin Text
   nodeEnter
@@ -120,15 +148,20 @@ function render(config) {
     .attr('id', d => `coin-text-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
     .attr('x', nodeWidth / 2)
-    .attr('y', nodeHeight + 7)
-    .attr('dy', '.9em')
-    .style('font-size', 13)
+    .attr('y', d => d.isOpen ? d.coinYexpanded + 9 : d.coinYnormal + 9)
+    .attr('dy', d => d.isOpen ? '.6em' : '.9em')
+    .style('font-size', d => d.isOpen ? 25 : 13)
     .style('font-weight', 400)
     .style('cursor', 'pointer')
     .style('fill', reportsColor)
-    .style('text-anchor', 'middle')
-    .text(helpers.getTextForTitle)
+    .style("text-anchor", "middle")
+    .text(d => d.isOpen ? '-' : helpers.getTextForTitle(d))
     .on('click', onClick(config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
+
+
+
 
 // Person Card Shadow
 nodeEnter
@@ -143,20 +176,41 @@ nodeEnter
   .attr('stroke-opacity', 0)
   .attr('filter', 'url(#boxShadow)')
   .attr('isExpanded', 'false')
+  .on('mouseover', d => coinHoverMove(d, coinYhover))
+  .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 // Person Card Container
 nodeEnter
   .append('rect')
-  .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
+  .attr('id', d => `cardcontainer-${d.id}`)
+  .attr('class', 
+    function(d) {
+      
+      // check parent is selected
+      if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
+        return 'selected2 box';
+      } else {
+        return 'box';
+      }
+    })
   .attr('width', nodeWidth)
   .attr('height', nodeHeight)
-  .attr('id', d => `cardcontainer-${d.id}`)
-  .attr('fill', backgroundColor)
+  .attr('fill', function(d) {
+      
+    // check parent is selected
+    if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
+      return accentColor2;
+    } else {
+      return backgroundColor;
+    }
+  })
   .attr('rx', nodeBorderRadius)
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
   .style('cursor', 'default')
-  .on('click', d => selectCard(d.id) )
+  .on('click', d => selectCard(d, config))
+  .on('mouseover', d => coinHoverMove(d, coinYhover))
+  .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   const namePos = {
     x: 74,
@@ -179,6 +233,9 @@ nodeEnter
     .style('fill', nameColor)
     .style('font-size', 14)
     .text(d => d.person.name)
+    .on('click', d => selectCard(d, config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // Person's Title
   nodeEnter
@@ -191,6 +248,9 @@ nodeEnter
     .style('cursor', 'default')
     .style('fill', titleColor)
     .text(d => d.person.title)
+    .on('click', d => selectCard(d, config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   const heightForTitle = 60 // getHeightForText(d.person.title)
   
@@ -205,6 +265,9 @@ nodeEnter
     .attr('height', avatarWidth)
     .attr('rx', avatarWidth / 2)
     .attr('ry', avatarWidth / 2)
+    .on('click', d => selectCard(d, config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
     // Person's department
     nodeEnter
@@ -244,7 +307,6 @@ nodeEnter
     .style('font-size', 14)
     .style('display', 'none')
     .text(d => d.person.mobileNumber)
-
   
   // Default Avatar's text
   nodeEnter
@@ -259,7 +321,10 @@ nodeEnter
     .style('fill', 'white')
     .style('text-anchor', 'middle')
     .style('cursor', 'default')
-    .text(d => helpers.getInitials(d.person.name)) 
+    .text(d => helpers.getInitials(d.person.name))
+    .on('click', d => selectCard(d, config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 
   // Person's Avatar
@@ -283,11 +348,6 @@ nodeEnter
             })
             d.person.hasImage = true
 
-            /* handle no image
-            if (d.person.avatar == null) {
-              d3.select(`#image-${d.id}`)
-                .classed('no-image', true)
-            }*/
             return d.person.avatar
           })
     })
@@ -295,6 +355,9 @@ nodeEnter
     .attr('href', d => d.person.avatar)
     .attr('clip-path', 'url(#avatarClip)')
     .style('cursor', 'default')
+    .on('click', d => selectCard(d, config))
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 
   // Converting to link
@@ -335,6 +398,8 @@ nodeEnter
     .attr('id', d => `expand-${d.id}`)
     .style('cursor', helpers.getCursorForNode)
     .on('click', d => expandCard(d.id) )
+    .on('mouseover', d => coinHoverMove(d, coinYhover))
+    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // SVG arrows on employee node expansion button
   nodeEnter
@@ -359,7 +424,7 @@ nodeEnter
 
   // remove all empty ones
   d3.selectAll('.remove')
-    .remove();
+    .remove(); //TODO: This might not work if there aren't any to remove
 
   /*nodeUpdate
     .select('rect.box')
@@ -459,23 +524,54 @@ function expandCard(id) {
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
 };
 
-function selectCard(id) {
-  const cardContainer = d3.select(`#cardcontainer-${id}`);
-  const coinCard = d3.select(`#coin-background-${id}`);
+function coinHoverMove(d, coinYnew) {
+  let transitionDuration = 200;
+  
+  if (!d.isOpen) {
+    d3.select(`#coin-background-${d.id}`)
+      .transition()
+      .duration(transitionDuration)
+      .attr('y', coinYnew);
+    d3.select(`#coin-shadow-${d.id}`)
+      .transition()
+      .duration(transitionDuration)
+      .attr('y', coinYnew);
+    d3.select(`#coin-text-${d.id}`)
+      .transition()
+      .duration(transitionDuration)
+      .attr('y', coinYnew + 9);
+  }
+}
 
-  console.log("Selecting card: " + id);
+function selectCard(d, config) {
+  const cardContainer = d3.select(`#cardcontainer-${d.id}`);
+  const coinCard = d3.select(`#coin-background-${d.id}`);
 
   // reset selected card background
-  d3.selectAll(`.selected`)
-    .classed("selected", false);
+  d3.selectAll(`.selected1, .selected2`)
+    .attr('fill', config.backgroundColor)
+    .classed("selected1", false)
+    .classed("selected2", false);
 
   // update selected card
-  cardContainer.classed("selected", true);
-  coinCard.classed("selected", true);
+  cardContainer
+    .attr('fill', config.accentColor1)
+    .classed("selected1", true);
+  coinCard
+    .attr('fill', config.accentColor1)
+    .classed("selected1", true);
 
-  //update the correct colours
-  d3.selectAll(`.selected`)
-    .classed("primary1Color", true);
+  // update children color as well
+  if (d.children) {
+    d.children.forEach(function (datum) {
+      d3.select(`#cardcontainer-${datum.id}`)
+        .attr('fill', config.accentColor2)
+        .classed("selected2", true);
+      d3.select(`#coin-background-${datum.id}`)
+        .attr('fill', config.accentColor2)
+        .classed("selected2", true);
+    })
+  }
 }
 
 module.exports = render

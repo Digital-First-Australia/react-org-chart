@@ -7,7 +7,7 @@ function onClick(configOnClick) {
   const { loadConfig } = configOnClick
 
   return datum => {
-    
+
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
     const { loadChildren, render, onPersonClick } = config
@@ -34,6 +34,8 @@ function onClick(configOnClick) {
         return
       }
 
+      moveCoinDown(datum);
+
       const result = loadChildren(datum)
       const handler = handleChildrenResult(config, datum)
 
@@ -52,23 +54,16 @@ function onClick(configOnClick) {
       datum._children = datum.children
       datum.children = null
 
-      // change coin text
-      d3.select(`#coin-text-${datum.id}`)
-        .text(helpers.getTextForTitle(datum))
-        .style("font-size", "13")
-        .attr('dy', '.9em');
-    } else {
+      moveCoinUp(datum);
+    
+      } else {
       // Expand the children
       config.callerNode = datum
       config.callerMode = 1
       datum.children = datum._children
       datum._children = null
 
-      // change coin text
-      d3.select(`#coin-text-${datum.id}`)
-        .text('-')
-        .style("font-size", "25")
-        .attr('dy', '.6em');
+      moveCoinDown(datum);
     }
 
     // Pass in the clicked datum as the sourceNode which
@@ -78,6 +73,54 @@ function onClick(configOnClick) {
       sourceNode: datum,
     })
   }
+}
+
+function moveCoinDown(datum) {
+  const transitionDuration = 300;
+  datum.isOpen = true;
+
+  // move coin down
+  d3.select(`#coin-background-${datum.id}`)
+    .transition()
+    .duration(transitionDuration)  
+    .attr('y', datum.coinYexpanded)
+  d3.select(`#coin-shadow-${datum.id}`)
+    .transition()
+    .duration(transitionDuration)  
+    .attr('y', datum.coinYexpanded)
+
+  // change coin text
+  d3.select(`#coin-text-${datum.id}`)
+    .text('-')
+    .style("font-size", "25")
+    .attr('dy', '.6em')
+    .transition()
+    .duration(transitionDuration)  
+    .attr('y', datum.coinYexpanded + 9);
+}
+
+function moveCoinUp(datum) {
+  const transitionDuration = 300;
+  datum.isOpen = false;
+
+  // move coin up
+  d3.select(`#coin-background-${datum.id}`)
+    .transition()
+    .duration(transitionDuration)  
+    .attr('y', datum.coinYnormal)
+  d3.select(`#coin-shadow-${datum.id}`)
+    .transition()
+    .duration(transitionDuration)  
+    .attr('y', datum.coinYnormal)
+
+  // change coin text
+  d3.select(`#coin-text-${datum.id}`)
+    .style("font-size", "13")
+    .attr('dy', '.9em')
+    .text(helpers.getTextForTitle(datum))
+    .transition()
+    .duration(transitionDuration)  
+    .attr('y', datum.coinYnormal + 9);
 }
 
 function handleChildrenResult(config, datum) {

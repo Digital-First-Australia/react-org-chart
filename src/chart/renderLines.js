@@ -43,10 +43,11 @@ function renderLines(config = {}) {
       .insert('path', 'g')
       .attr('class', 'link')
       .attr('fill', 'none')
-      .attr('stroke', '#A9A9A9')
-      .attr('stroke-opacity', 0.5)
+      .attr('stroke', '#ababab')
+      .attr('stroke-opacity', 0.3)
       .attr('stroke-width', 1.5)
       .attr('d', d => {
+        /* Where line points start :) */
         const linePoints = [
           {
             x: d.source.x0 + parseInt(nodeWidth / 2),
@@ -81,11 +82,11 @@ function renderLines(config = {}) {
           },
           {
             x: d.source.x + parseInt(nodeWidth / 2),
-            y: d.target.y - margin.top / 2,
+            y: d.target.y - margin.top,
           },
           {
             x: d.target.x + parseInt(nodeWidth / 2),
-            y: d.target.y - margin.top / 2,
+            y: d.target.y - margin.top,
           },
           {
             x: d.target.x + parseInt(nodeWidth / 2),

@@ -43,11 +43,11 @@ function init(options) {
 
   // Calculate how many pixel nodes to be spaced based on the
   // type of line that needs to be rendered
-  if (lineType == 'angle') {
-    config.lineDepthY = nodeHeight + 40
+  /*if (lineType == 'angle') {
+    config.lineDepthY = nodeHeight + 46
   } else {
     config.lineDepthY = nodeHeight + 60
-  }
+  }*/
 
   // Get the root element
   const elem = document.querySelector(id)
