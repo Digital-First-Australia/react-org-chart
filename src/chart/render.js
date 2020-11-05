@@ -45,6 +45,8 @@ function render(config) {
     onConfigChange,
   } = config
 
+  console.log(config);
+
   // Compute the new tree layout.
   const nodes = tree.nodes(treeData).reverse()
   const links = tree.links(nodes)
@@ -206,7 +208,7 @@ nodeEnter
   .attr('ry', nodeBorderRadius)
   .attr('isExpanded', 'false')
   .style('cursor', 'default')
-  .on('click', d => selectCard(d.id) )
+  .on('click', d => selectCard(d) )
 
   const namePos = {
     x: 74,
@@ -503,17 +505,18 @@ function expandCard(id) {
     department.style('display', 'inline')
     mobile.style('display', 'inline')
     aboutMe.style('display', 'inline')
-
   }
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
 };
 
-function selectCard(id) {
+function selectCard(d) {
+  const id = d.id;
   const cardContainer = d3.select(`#cardcontainer-${id}`);
   const coinCard = d3.select(`#coin-background-${id}`);
 
-  console.log("Selecting card: " + id);
+  console.log("Selecting card: ");
+  console.log(d);
 
   // reset selected card background
   d3.selectAll(`.selected`)

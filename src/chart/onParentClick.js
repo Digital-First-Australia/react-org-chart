@@ -3,7 +3,7 @@ module.exports = onParentClick
 function onParentClick(configOnClick, d) {
   //event.preventDefault()
 
-  console.log("Clicked on get parent!");
+  console.log("Clicked on get parent of the card:");
   console.log(d);
 
   const { loadConfig } = configOnClick
@@ -38,24 +38,58 @@ function handleResult(config, d) {
   const { render } = config
 
   return datum => {
+
+    // Datum is the new boss
+
+    console.log("Datum");
+    console.log(datum);
+    console.log("Children");
+    console.log(datum.children);
+    
+    if (datum.children == undefined) {
+      
+      // there's no parent! Get rid of the + button
+      d3.select(`#get-parent-background-${d.id}`)
+        .style("visibility", "hidden");
+      d3.select(`#get-parent-shadow-${d.id}`)
+        .style("visibility", "hidden");
+      d3.select(`#get-parent-text-${d.id}`)
+        .style("visibility", "hidden");
+
+      return null;
+    }
+
+    // set the parent
+    d.parent = datum;
+
+    // update its children
     const children = datum.children.map(item => {
       if (item.id === d.id) {
+        item.hasParent = true;
+        d.hasParent = true;
         return { ...item, ...d }
       } else {
         return item
       }
     })
 
-    const result = { ...datum, children }
+    // Get rid of + button
+    // there's no parent! Get rid of the + button
+    d3.select(`#get-parent-background-${d.id}`)
+      .style("visibility", "hidden");
+    d3.select(`#get-parent-shadow-${d.id}`)
+      .style("visibility", "hidden");
+    d3.select(`#get-parent-text-${d.id}`)
+      .style("visibility", "hidden");
 
-    console.log("Rendering again");
+    const result = { ...datum, children }
 
     // Pass in the newly rendered datum as the sourceNode
     // which tells the child nodes where to animate in from
     render({
       ...config,
-      treeData: { ...result, children, _children: null },
-      sourceNode: result,
+      treeData: { ...result, children, _children: children },
+      sourceNode: d, //result,
     })
   }
 }

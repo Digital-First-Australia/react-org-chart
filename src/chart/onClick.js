@@ -80,6 +80,8 @@ function onClick(configOnClick) {
   }
 }
 
+
+
 function handleChildrenResult(config, datum) {
   const { tree, render } = config
 
