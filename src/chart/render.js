@@ -149,7 +149,7 @@ function render(config) {
   nodeEnter
     .append('text')
     .attr('id', d => `get-parent-text-${d.id}`)
-    .attr('class', d => (d.hasParent ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
+    .attr('class', d => (d.hasParent ? 'remove' : ``))
     .attr('x', nodeWidth / 2)
     .attr('y', parentCoinYnormal + 9)
     .attr('dy', '.7em')
@@ -188,11 +188,32 @@ function render(config) {
     .append('rect')
     .attr('id', d => `coin-background-${d.id}`)
     .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : 'box coin'))
+    .attr('class', function(d) {
+      // remove empty coins
+      if (!helpers.getTextForTitle(d)) {
+        return 'remove';
+      }
+      // check parent is selected
+      if (d.parent === undefined) {
+        return 'box coin';
+      } else if (d3.select(`#coin-background-${d.parent.id}`).classed("selected1")) {
+        return 'selected2';
+      }
+      return 'box coin';
+    })
     .attr('x', coinX)
     .attr('y', d => d.isOpen ? d.coinYexpanded : d.coinYnormal)
     .attr('width', coinWidth)
     .attr('height', coinWidth)
-    .attr('fill', backgroundColor)
+    .attr('fill', function(d) {
+      // check parent is selected
+      if (d.parent === undefined) {
+        return backgroundColor;
+      } else if (d3.select(`#coin-background-${d.parent.id}`).classed("selected1")) {
+        return accentColor2;
+      }
+      return backgroundColor;
+    })
     .attr('rx', coinWidth / 2)
     .attr('ry', coinWidth / 2)
     .style('cursor', helpers.getCursorForNode)
@@ -204,7 +225,7 @@ function render(config) {
   nodeEnter
     .append('text')
     .attr('id', d => `coin-text-${d.id}`)
-    .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
+    .attr('class', d => (!helpers.getTextForTitle(d) ? 'remove' : ``))
     .attr('x', nodeWidth / 2)
     .attr('y', d => d.isOpen ? d.coinYexpanded + 9 : d.coinYnormal + 9)
     .attr('dy', d => d.isOpen ? '.6em' : '.9em')
@@ -242,7 +263,6 @@ nodeEnter
   .attr('id', d => `cardcontainer-${d.id}`)
   .attr('class', 
     function(d) {
-      
       // check parent is selected
       if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
         return 'selected2 box main-card';
