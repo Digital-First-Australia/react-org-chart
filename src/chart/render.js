@@ -226,6 +226,7 @@ nodeEnter
   .append('rect')
   .attr('width', nodeWidth)
   .attr('height', nodeHeight)
+  .attr('class', 'main-card')
   .attr('id', d => `card-${d.id}`)
   .attr('fill', backgroundColor)
   .attr('rx', nodeBorderRadius)
@@ -234,8 +235,6 @@ nodeEnter
   .attr('stroke-opacity', 0)
   .attr('filter', 'url(#boxShadow)')
   .attr('isExpanded', 'false')
-  .on('mouseover', d => coinHoverMove(d, coinYhover))
-  .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 // Person Card Container
 nodeEnter
@@ -246,9 +245,9 @@ nodeEnter
       
       // check parent is selected
       if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
-        return 'selected2 box';
+        return 'selected2 box main-card';
       } else {
-        return 'box';
+        return 'box main-card';
       }
     })
   .attr('width', nodeWidth)
@@ -267,8 +266,6 @@ nodeEnter
   .attr('isExpanded', 'false')
   .style('cursor', 'default')
   .on('click', d => selectCard(d, config))
-  .on('mouseover', d => coinHoverMove(d, coinYhover))
-  .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   const namePos = {
     x: 74,
@@ -283,7 +280,7 @@ nodeEnter
   // Person's Name
   nodeEnter
     .append('text')
-    .attr('class', PERSON_NAME_CLASS + ' unedited')
+    .attr('class', PERSON_NAME_CLASS + ' unedited main-card')
     .attr('x', namePos.x)
     .attr('y', namePos.y)
     .attr('dy', '.3em')
@@ -292,13 +289,11 @@ nodeEnter
     .style('font-size', 14)
     .text(d => d.person.name)
     .on('click', d => selectCard(d, config))
-    .on('mouseover', d => coinHoverMove(d, coinYhover))
-    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   // Person's Title
   nodeEnter
     .append('text')
-    .attr('class', PERSON_TITLE_CLASS + ' unedited')
+    .attr('class', PERSON_TITLE_CLASS + ' unedited main-card')
     .attr('x', namePos.x)
     .attr('y', namePos.y + 21)
     .attr('dy', '0.1em')
@@ -307,8 +302,6 @@ nodeEnter
     .style('fill', titleColor)
     .text(d => d.person.title)
     .on('click', d => selectCard(d, config))
-    .on('mouseover', d => coinHoverMove(d, coinYhover))
-    .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
   const heightForTitle = 60 // getHeightForText(d.person.title)
   
@@ -316,7 +309,7 @@ nodeEnter
   nodeEnter
     .append('rect')
     .attr('id', d => `avatar-default-${d.id}`)
-    .attr('class', 'avatar-default')
+    .attr('class', 'avatar-default main-card')
     .attr('x', avatarPos.x)
     .attr('y', avatarPos.y)
     .attr('width', avatarWidth)
@@ -331,6 +324,7 @@ nodeEnter
     nodeEnter
     .append('text')
     .attr('id', d => `person-department-${d.id}`)
+    .attr('class', 'main-card')
     .attr('x', namePos.x)
     .attr('y', namePos.y + 71)
     .attr('dy', '.3em')
@@ -344,6 +338,7 @@ nodeEnter
     nodeEnter
     .append('text')
     .attr('id', d => `person-about-me-${d.id}`)
+    .attr('class', 'main-card')
     .attr('x', namePos.x)
     .attr('y', namePos.y + 80)
     .attr('dy', '.3em')
@@ -357,6 +352,7 @@ nodeEnter
     nodeEnter
     .append('text')
     .attr('id', d => `person-mobile-number-${d.id}`)
+    .attr('class', 'main-card')
     .attr('x', namePos.x)
     .attr('y', namePos.y + 89)
     .attr('dy', '.3em')
@@ -370,6 +366,7 @@ nodeEnter
   nodeEnter
     .append('text')
     //.attr('class', 'avatar-default-text')
+    .attr('class', 'main-card')
     .attr('x', avatarPos.x + (avatarWidth / 2))
     .attr('y', avatarPos.y + (avatarWidth / 2))
     .attr('dy', '.35em')
@@ -389,6 +386,7 @@ nodeEnter
   nodeEnter
     .append('image')
     .attr('id', d => `image-${d.id}`)
+    .attr('class', 'main-card')
     .attr('width', avatarWidth)
     .attr('height', avatarWidth)
     .attr('x', avatarPos.x)
@@ -448,12 +446,13 @@ nodeEnter
   // Employee node expansion button
   nodeEnter
   .append('circle')
+    .attr('id', d => `expand-${d.id}`)
+    .attr('class', 'main-card')  
     .attr('cx', 252.5)
     .attr('cy', 34.5)
     .attr('r', 16)
     .attr('fill', titleColor)
     .attr('fill-opacity', 0.08)
-    .attr('id', d => `expand-${d.id}`)
     .style('cursor', helpers.getCursorForNode)
     .on('click', d => expandCard(d.id) )
     .on('mouseover', d => coinHoverMove(d, coinYhover))
@@ -462,21 +461,23 @@ nodeEnter
   // SVG arrows on employee node expansion button
   nodeEnter
   .append('line')
+    .attr('id', d => `arrow-${d.id}`)
+    .attr('class', 'main-card')    
     .attr("x1", 247)
     .attr("y1", 32)
     .attr("x2", 253.1) 
     .attr("y2", 38)
-    .attr('id', d => `arrow-${d.id}`)
     .style("stroke", titleColor)
     .style("stroke-width", 1)
 
   nodeEnter
   .append('line')
+    .attr('id', d => `arrow-${d.id}`)
+    .attr('class', 'main-card')   
     .attr("x1", 259)
     .attr("y1", 32)
     .attr("x2", 252.9) 
     .attr("y2", 38)
-    .attr('id', d => `arrow-${d.id}`)
     .style("stroke", titleColor)
     .style("stroke-width", 1)
 
@@ -484,9 +485,17 @@ nodeEnter
   d3.selectAll('.remove')
     .remove(); //TODO: This might not work if there aren't any to remove
 
-  /*nodeUpdate
-    .select('rect.box')
-    .attr('fill', backgroundColor)*/
+  // expand out coins on hover  
+  d3.selectAll('.main-card')
+    .on('mouseover', function(d) {
+      parentCoinHoverMove(d, parentCoinYhover);
+      coinHoverMove(d, coinYhover);
+    })
+    .on('mouseout', function(d) { 
+      parentCoinHoverMove(d, parentCoinYnormal);
+      coinHoverMove(d, d.coinYnormal);
+    })
+      
 
   // Transition exiting nodes to the parent's new position.
   const nodeExit = node
@@ -620,6 +629,7 @@ function parentCoinHoverMove(d, parentCoinYnew) {
 function selectCard(d, config) {
   const cardContainer = d3.select(`#cardcontainer-${d.id}`);
   const coinCard = d3.select(`#coin-background-${d.id}`);
+  const parentCoinCard = d3.select(`#get-parent-background-${d.id}`);
 
   console.log("Selecting card:")
   console.log(d);
@@ -637,6 +647,13 @@ function selectCard(d, config) {
   coinCard
     .attr('fill', config.accentColor1)
     .classed("selected1", true);
+  
+  // update parent coin card if it exists
+  if (parentCoinCard)  {
+    parentCoinCard
+      .attr('fill', config.accentColor1)
+      .classed("selected1", true);
+  }
 
   // update children color as well
   if (d.children) {
