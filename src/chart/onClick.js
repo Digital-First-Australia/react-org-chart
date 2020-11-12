@@ -8,11 +8,12 @@ function onClick(configOnClick) {
 
   return datum => {
 
-    console.log("Datum")
-    console.log(datum);
-
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
+
+    console.log("Config at start")
+    console.log(config);
+
     const { loadChildren, render, onPersonClick } = config
     event.preventDefault();
 
@@ -55,6 +56,9 @@ function onClick(configOnClick) {
 
     if (datum.children) {
       // Collapse the children
+      console.log("Collapsing children:")
+      console.log(datum.children)
+      console.log(datum._children)
       config.callerNode = datum
       config.callerMode = 0
       datum._children = datum.children
@@ -62,7 +66,10 @@ function onClick(configOnClick) {
 
       moveCoinUp(datum);
     
-      } else {
+    } else {
+      console.log("Expanding children:")
+      console.log(datum.children)
+      console.log(datum._children)
       // Expand the children
       config.callerNode = datum
       config.callerMode = 1
@@ -75,11 +82,14 @@ function onClick(configOnClick) {
     console.log("Datum at end:")
     console.log(datum);
 
+    console.log("Config at end:")
+    console.log(config);
+
     // Pass in the clicked datum as the sourceNode which
     // tells the child nodes where to animate in from
     render({
       ...config,
-      sourceNode: datum,
+      sourceNode: datum, //TODO: check the sourceNode's going through correctly
     })
   }
 }

@@ -47,6 +47,7 @@ function render(config) {
     onConfigChange,
   } = config
 
+  console.log("Config at start of render")
   console.log(config);
 
   // Compute the new tree layout.
@@ -55,6 +56,9 @@ function render(config) {
 
   config.links = links
   config.nodes = nodes
+
+  console.log("Config after setting nodes")
+  console.log(config);
 
   nodes.forEach(function(d) {
     // Normalize for fixed-depth.
