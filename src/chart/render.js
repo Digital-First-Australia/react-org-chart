@@ -325,8 +325,8 @@ nodeEnter
     .append('text')
     .attr('id', d => `person-department-${d.id}`)
     .attr('class', 'main-card')
-    .attr('x', namePos.x)
-    .attr('y', namePos.y + 71)
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y + 70)
     .attr('dy', '.3em')
     .style('cursor', 'default')
     .style('fill', nameColor)
@@ -339,9 +339,10 @@ nodeEnter
     .append('text')
     .attr('id', d => `person-about-me-${d.id}`)
     .attr('class', 'main-card')
-    .attr('x', namePos.x)
-    .attr('y', namePos.y + 80)
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y + 100)
     .attr('dy', '.3em')
+    .attr('width', 150)
     .style('cursor', 'default')
     .style('fill', nameColor)
     .style('font-size', 14)
@@ -353,9 +354,10 @@ nodeEnter
     .append('text')
     .attr('id', d => `person-mobile-number-${d.id}`)
     .attr('class', 'main-card')
-    .attr('x', namePos.x)
-    .attr('y', namePos.y + 89)
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y + 130)
     .attr('dy', '.3em')
+    .attr('width', 150)
     .style('cursor', 'default')
     .style('fill', nameColor)
     .style('font-size', 14)
@@ -376,6 +378,7 @@ nodeEnter
     .style('fill', 'white')
     .style('text-anchor', 'middle')
     .style('cursor', 'default')
+    .attr('width', 150)
     .text(d => helpers.getInitials(d.person.name))
     .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
@@ -415,6 +418,35 @@ nodeEnter
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
+    //Phone icon
+    nodeEnter.append("svg")
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y + 195)
+    .attr('width', 20)
+    .attr('height', 24)
+    .attr("xlink:href", "../../../Downloads/phone.svg")
+    .attr('id', d => `phone-image-${d.id}`)
+    .style('display', 'none')
+
+    //Speech icon
+    nodeEnter.append("svg")
+    .attr('x', avatarPos.x + 40)
+    .attr('y', avatarPos.y + 195)
+    .attr('width', 20)
+    .attr('height', 24)
+    .attr("xlink:href", "../../../Downloads/speech.svg")
+    .attr('id', d => `speech-image-${d.id}`)
+    .style('display', 'none')
+
+    //Email icon
+    nodeEnter.append("svg")
+    .attr('x', avatarPos.x + 80)
+    .attr('y', avatarPos.y + 195)
+    .attr('width', 20)
+    .attr('height', 24)
+    .attr("xlink:href", "../../../Downloads/email.svg")
+    .attr('id', d => `email-image-${d.id}`)
+    .style('display', 'none')
 
   // Converting to link
   const nodeLink = nodeEnter
@@ -554,6 +586,11 @@ function expandCard(id) {
   const department = d3.select(`#person-department-${id}`)
   const mobile = d3.select(`#person-mobile-number-${id}`)
   const aboutMe = d3.select(`#person-about-me-${id}`)
+  const phone = d3.select(`#phone-image-${id}`)
+  const speech = d3.selectAll(`#speech-image-${id}`)
+  const email = d3.selectAll(`#email-image-${id}`)
+
+
 
   if(isExpanded) {
     card
@@ -570,6 +607,10 @@ function expandCard(id) {
     department.style('display', 'none')
     mobile.style('display', 'none')
     aboutMe.style('display', 'none')
+    phone.style('display', 'none')
+    speech.style('display', 'none')
+    email.style('display', 'none')
+
   }
   else {
     card
@@ -585,6 +626,10 @@ function expandCard(id) {
     department.style('display', 'inline')
     mobile.style('display', 'inline')
     aboutMe.style('display', 'inline')
+    phone.style('display', 'inline')
+    speech.style('display', 'inline')
+    email.style('display', 'inline')
+
   }
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
