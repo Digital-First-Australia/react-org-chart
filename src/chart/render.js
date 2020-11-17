@@ -424,8 +424,8 @@ nodeEnter
     .attr('y', avatarPos.y + 195)
     .attr('width', 20)
     .attr('height', 24)
-    .attr("xlink:href", "../../../Downloads/phone.svg")
-    .attr('id', d => `phone-image-${d.id}`)
+    .attr("xlink:href", "chart/assets/phone.svg")
+    .attr('id', d => `phone-svg-${d.id}`)
     .style('display', 'none')
 
     //Speech icon
@@ -434,8 +434,8 @@ nodeEnter
     .attr('y', avatarPos.y + 195)
     .attr('width', 20)
     .attr('height', 24)
-    .attr("xlink:href", "../../../Downloads/speech.svg")
-    .attr('id', d => `speech-image-${d.id}`)
+    .attr("xlink:href", "chart/assets/speech.svg")
+    .attr('id', d => `speech-svg-${d.id}`)
     .style('display', 'none')
 
     //Email icon
@@ -444,8 +444,8 @@ nodeEnter
     .attr('y', avatarPos.y + 195)
     .attr('width', 20)
     .attr('height', 24)
-    .attr("xlink:href", "../../../Downloads/email.svg")
-    .attr('id', d => `email-image-${d.id}`)
+    .attr("xlink:href", "chart/assets/email.svg")
+    .attr('id', d => `email-svg-${d.id}`)
     .style('display', 'none')
 
   // Converting to link
@@ -586,9 +586,9 @@ function expandCard(id) {
   const department = d3.select(`#person-department-${id}`)
   const mobile = d3.select(`#person-mobile-number-${id}`)
   const aboutMe = d3.select(`#person-about-me-${id}`)
-  const phone = d3.select(`#phone-image-${id}`)
-  const speech = d3.selectAll(`#speech-image-${id}`)
-  const email = d3.selectAll(`#email-image-${id}`)
+  const phone = d3.select(`#phone-svg-${id}`)
+  const speech = d3.selectAll(`#speech-svg-${id}`)
+  const email = d3.selectAll(`#email-svg-${id}`)
 
 
 
@@ -607,6 +607,7 @@ function expandCard(id) {
     department.style('display', 'none')
     mobile.style('display', 'none')
     aboutMe.style('display', 'none')
+
     phone.style('display', 'none')
     speech.style('display', 'none')
     email.style('display', 'none')
