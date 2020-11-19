@@ -8,8 +8,8 @@ function onClick(configOnClick) {
 
   return datum => {
 
-    console.log("Datum")
-    console.log(datum);
+    // console.log("Datum")
+    // console.log(datum);
 
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
@@ -72,8 +72,8 @@ function onClick(configOnClick) {
       moveCoinDown(datum);
     }
 
-    console.log("Datum at end:")
-    console.log(datum);
+    // console.log("Datum at end:")
+    // console.log(datum);
 
     // Pass in the clicked datum as the sourceNode which
     // tells the child nodes where to animate in from
@@ -137,7 +137,7 @@ function handleChildrenResult(config, datum) {
 
   return children => {
     
-    console.log("Handling Children Result")
+    // console.log("Handling Children Result")
     
     const result = {
       ...datum,

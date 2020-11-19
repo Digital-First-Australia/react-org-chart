@@ -3,8 +3,8 @@ module.exports = onParentClick
 function onParentClick(configOnClick, d) {
   //event.preventDefault()
 
-  console.log("Clicked on get parent of the card:");
-  console.log(d);
+  // console.log("Clicked on get parent of the card:");
+  // console.log(d);
 
   const { loadConfig } = configOnClick
   const config = loadConfig()
@@ -31,7 +31,7 @@ function onParentClick(configOnClick, d) {
     }
   }
 
-  console.log("Doesn't have a parent");
+  // console.log("Doesn't have a parent");
 }
 
 function handleResult(config, d) {
@@ -41,10 +41,10 @@ function handleResult(config, d) {
 
     // Datum is the new boss
 
-    console.log("Datum");
-    console.log(datum);
-    console.log("Children");
-    console.log(datum.children);
+    // console.log("Datum");
+    // console.log(datum);
+    // console.log("Children");
+    // console.log(datum.children);
     
     if (datum.children == undefined) {
       

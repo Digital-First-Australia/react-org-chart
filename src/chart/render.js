@@ -13,7 +13,10 @@ const PERSON_NAME_CLASS = 'org-chart-person-name'
 const PERSON_TITLE_CLASS = 'org-chart-person-title'
 const PERSON_HIGHLIGHT = 'org-chart-person-highlight'
 const PERSON_REPORTS_CLASS = 'org-chart-person-reports'
-
+const PERSON_DEPARTMENT_CLASS = 'org-chart-person-department'
+const PERSON_ABOUTME_CLASS = 'org-chart-person-aboutme'
+const PERSON_MOBILENUMBER_CLASS = 'org-chart-person-mobilenumber'
+const PERSON_AVATARTEXT_CLASS = 'org-chart-person-avatartext'
 
 function render(config) {
   const {
@@ -47,8 +50,6 @@ function render(config) {
     onConfigChange,
   } = config
 
-  console.log(config);
-
   // Compute the new tree layout.
   const nodes = tree.nodes(treeData).reverse()
   const links = tree.links(nodes)
@@ -63,6 +64,9 @@ function render(config) {
     // Instantiate local variables for coin locations
     d.coinYnormal = nodeHeight - 8;
     d.coinYexpanded = nodeHeight + 7;
+
+    // Instantiate local variables for text wrap
+    //d.textWrapped = false;
 
     if (d.isOpen === undefined) {
       if (!d.hasParent) {
@@ -324,10 +328,11 @@ nodeEnter
     nodeEnter
     .append('text')
     .attr('id', d => `person-department-${d.id}`)
-    .attr('class', 'main-card')
+    .attr('class', PERSON_DEPARTMENT_CLASS + ' unedited main-card')
     .attr('x', avatarPos.x)
     .attr('y', avatarPos.y + 70)
     .attr('dy', '.3em')
+    .attr('width', 260)
     .style('cursor', 'default')
     .style('fill', nameColor)
     .style('font-size', 14)
@@ -338,26 +343,43 @@ nodeEnter
     nodeEnter
     .append('text')
     .attr('id', d => `person-about-me-${d.id}`)
-    .attr('class', 'main-card')
+    .attr('class', PERSON_ABOUTME_CLASS + ' unedited main-card')
     .attr('x', avatarPos.x)
     .attr('y', avatarPos.y + 100)
     .attr('dy', '.3em')
-    .attr('width', 150)
+    .attr('width', 260)
     .style('cursor', 'default')
     .style('fill', nameColor)
     .style('font-size', 14)
     .style('display', 'none')
-    .text(d => d.person.aboutMe)
+    .text(function(d) {
+
+      if (!d.textWrapped) {
+        const truncateLen = 14;
+        var htmlRemoved = stripHTMLtags(d.person.aboutMe);
+        var txtlen = htmlRemoved.split(' ').length;
+        var aboutMe = truncate(htmlRemoved, truncateLen);
+  
+        if (txtlen > truncateLen) {
+          aboutMe = aboutMe + "...";
+        }
+        d.person.aboutMe = aboutMe;
+        return aboutMe;
+      }
+     else {
+       return d.person.aboutMe;
+     }
+    })
 
     // Person's mobile number
     nodeEnter
     .append('text')
     .attr('id', d => `person-mobile-number-${d.id}`)
-    .attr('class', 'main-card')
+    .attr('class', PERSON_MOBILENUMBER_CLASS + ' unedited main-card')
     .attr('x', avatarPos.x)
     .attr('y', avatarPos.y + 130)
     .attr('dy', '.3em')
-    .attr('width', 150)
+    .attr('width', 260)
     .style('cursor', 'default')
     .style('fill', nameColor)
     .style('font-size', 14)
@@ -368,7 +390,7 @@ nodeEnter
   nodeEnter
     .append('text')
     //.attr('class', 'avatar-default-text')
-    .attr('class', 'main-card')
+    .attr('class', PERSON_AVATARTEXT_CLASS + ' unedited main-card')
     .attr('x', avatarPos.x + (avatarWidth / 2))
     .attr('y', avatarPos.y + (avatarWidth / 2))
     .attr('dy', '.35em')
@@ -486,7 +508,7 @@ nodeEnter
     .attr('fill', titleColor)
     .attr('fill-opacity', 0.08)
     .style('cursor', helpers.getCursorForNode)
-    .on('click', d => expandCard(d.id) )
+    .on('click', d => expandCard(d.id, d) )
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
@@ -545,6 +567,7 @@ nodeEnter
   svg.selectAll('text.unedited.' + PERSON_NAME_CLASS).call(wrapText, wrapWidth)
   svg.selectAll('text.unedited.' + PERSON_TITLE_CLASS).call(wrapText, wrapWidth)
 
+
   // Render lines connecting nodes
   renderLines(config)
 
@@ -577,7 +600,7 @@ nodeEnter
   onConfigChange(config)
 }
 
-function expandCard(id) {
+function expandCard(id, d) {
   const card = d3.select(`#card-${id}`)
   const cardcontainer = d3.select(`#cardcontainer-${id}`)
   const arrow = d3.selectAll(`#arrow-${id}`)
@@ -589,8 +612,6 @@ function expandCard(id) {
   const phone = d3.select(`#phone-svg-${id}`)
   const speech = d3.selectAll(`#speech-svg-${id}`)
   const email = d3.selectAll(`#email-svg-${id}`)
-
-
 
   if(isExpanded) {
     card
@@ -631,6 +652,15 @@ function expandCard(id) {
     speech.style('display', 'inline')
     email.style('display', 'inline')
 
+    if(!d.textWrapped)
+    {
+      const wrapWidth = 260;
+      department.call(wrapText, wrapWidth)
+      aboutMe.call(wrapText, wrapWidth)
+      mobile.call(wrapText, wrapWidth)
+
+      d.textWrapped = true;
+    }
   }
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
@@ -677,9 +707,6 @@ function selectCard(d, config) {
   const coinCard = d3.select(`#coin-background-${d.id}`);
   const parentCoinCard = d3.select(`#get-parent-background-${d.id}`);
 
-  console.log("Selecting card:")
-  console.log(d);
-
   // reset selected card background
   d3.selectAll(`.selected1, .selected2`)
     .attr('fill', config.backgroundColor)
@@ -712,6 +739,18 @@ function selectCard(d, config) {
         .classed("selected2", true);
     })
   }
+}
+
+function truncate(text, numberofwords) {
+  var truncatedtext =  text.split(" ").splice(0,numberofwords).join(" ");
+  truncatedtext = truncatedtext.split(/,(?=\S)/).join(", ");
+  return truncatedtext;
+}
+
+function stripHTMLtags(text) {
+  var cleanText = text.replace(/<\/?[^>]+(>|$)/g, "");
+  cleanText = cleanText.replace("&quot;","'");
+  return cleanText;
 }
 
 module.exports = render
