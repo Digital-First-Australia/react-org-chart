@@ -223,53 +223,50 @@ function render(config) {
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
 
+  // Person Card Shadow
+  nodeEnter
+    .append('rect')
+    .attr('width', nodeWidth)
+    .attr('height', nodeHeight)
+    .attr('class', 'main-card')
+    .attr('id', d => `card-${d.id}`)
+    .attr('fill', backgroundColor)
+    .attr('rx', nodeBorderRadius)
+    .attr('ry', nodeBorderRadius)
+    .attr('fill-opacity', 0.13)
+    .attr('stroke-opacity', 0)
+    .attr('filter', 'url(#boxShadow)')
+    .attr('isExpanded', 'false')
 
-
-// Person Card Shadow
-nodeEnter
-  .append('rect')
-  .attr('width', nodeWidth)
-  .attr('height', nodeHeight)
-  .attr('class', 'main-card')
-  .attr('id', d => `card-${d.id}`)
-  .attr('fill', backgroundColor)
-  .attr('rx', nodeBorderRadius)
-  .attr('ry', nodeBorderRadius)
-  .attr('fill-opacity', 0.13)
-  .attr('stroke-opacity', 0)
-  .attr('filter', 'url(#boxShadow)')
-  .attr('isExpanded', 'false')
-
-// Person Card Container
-nodeEnter
-  .append('rect')
-  .attr('id', d => `cardcontainer-${d.id}`)
-  .attr('class', 
-    function(d) {
-      
+  // Person Card Container
+  nodeEnter
+    .append('rect')
+    .attr('id', d => `cardcontainer-${d.id}`)
+    .attr('class', 
+      function(d) {
+        // check parent is selected
+        if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
+          return 'selected2 box main-card';
+        } else {
+          return 'box main-card';
+        }
+      })
+    .attr('width', nodeWidth)
+    .attr('height', nodeHeight)
+    .attr('fill', function(d) {
+        
       // check parent is selected
       if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
-        return 'selected2 box main-card';
+        return accentColor2;
       } else {
-        return 'box main-card';
+        return backgroundColor;
       }
     })
-  .attr('width', nodeWidth)
-  .attr('height', nodeHeight)
-  .attr('fill', function(d) {
-      
-    // check parent is selected
-    if (d.parent !== undefined && d3.select(`#cardcontainer-${d.parent.id}`).classed("selected1")) {
-      return accentColor2;
-    } else {
-      return backgroundColor;
-    }
-  })
-  .attr('rx', nodeBorderRadius)
-  .attr('ry', nodeBorderRadius)
-  .attr('isExpanded', 'false')
-  .style('cursor', 'default')
-  .on('click', d => selectCard(d, config))
+    .attr('rx', nodeBorderRadius)
+    .attr('ry', nodeBorderRadius)
+    .attr('isExpanded', 'false')
+    .style('cursor', 'default')
+    .on('click', d => selectCard(d, config))
 
   const namePos = {
     x: 74,
@@ -308,7 +305,7 @@ nodeEnter
     .on('click', d => selectCard(d, config))
 
   const heightForTitle = 60 // getHeightForText(d.person.title)
-  
+
   // Person's Default Avatar
   nodeEnter
     .append('rect')
@@ -337,7 +334,9 @@ nodeEnter
     .style('fill', nameColor)
     .style('font-size', 14)
     .style('display', 'none')
-    .text(d => d.person.department)
+    .text(function(d) {
+      return d.person.department;
+    })
 
     // Person's about me
     nodeEnter
@@ -353,7 +352,6 @@ nodeEnter
     .style('font-size', 14)
     .style('display', 'none')
     .text(function(d) {
-
       if (!d.textWrapped) {
         const truncateLen = 14;
         var htmlRemoved = stripHTMLtags(d.person.aboutMe);
@@ -366,9 +364,9 @@ nodeEnter
         d.person.aboutMe = aboutMe;
         return aboutMe;
       }
-     else {
-       return d.person.aboutMe;
-     }
+      else {
+        return d.person.aboutMe;
+      }
     })
 
     // Person's mobile number
@@ -385,6 +383,7 @@ nodeEnter
     .style('font-size', 14)
     .style('display', 'none')
     .text(d => d.person.mobileNumber)
+  
   
   // Default Avatar's text
   nodeEnter
@@ -562,10 +561,15 @@ nodeEnter
   // Update the links
   const link = svg.selectAll('path.link').data(links, d => d.target.id)
 
-  // Wrap the title texts
-  const wrapWidth = 200
+  // Wrap the texts
+  const wrapWidth = 180
+  const wrapWidthFull = 260;
   svg.selectAll('text.unedited.' + PERSON_NAME_CLASS).call(wrapText, wrapWidth)
   svg.selectAll('text.unedited.' + PERSON_TITLE_CLASS).call(wrapText, wrapWidth)
+  svg.selectAll('text.unedited.' + PERSON_DEPARTMENT_CLASS).call(wrapText, wrapWidthFull)
+  svg.selectAll('text.unedited.' + PERSON_ABOUTME_CLASS).call(wrapText, wrapWidthFull)
+  svg.selectAll('text.unedited.' + PERSON_MOBILENUMBER_CLASS).call(wrapText, wrapWidthFull)
+  svg.selectAll('text.unedited.' + PERSON_AVATARTEXT_CLASS).call(wrapText, wrapWidthFull)
 
 
   // Render lines connecting nodes
@@ -610,8 +614,8 @@ function expandCard(id, d) {
   const mobile = d3.select(`#person-mobile-number-${id}`)
   const aboutMe = d3.select(`#person-about-me-${id}`)
   const phone = d3.select(`#phone-svg-${id}`)
-  const speech = d3.selectAll(`#speech-svg-${id}`)
-  const email = d3.selectAll(`#email-svg-${id}`)
+  const speech = d3.select(`#speech-svg-${id}`)
+  const email = d3.select(`#email-svg-${id}`)
 
   if(isExpanded) {
     card
