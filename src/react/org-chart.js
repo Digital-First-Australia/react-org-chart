@@ -30,6 +30,7 @@ class OrgChart extends PureComponent {
       zoomOutId,
       zoomExtentId,
       tree,
+      allowUpperLevelView,
       initialZoom,
       ...options
     } = this.props
@@ -44,6 +45,7 @@ class OrgChart extends PureComponent {
       zoomExtentId: zoomExtentId,
       initialZoom: initialZoom,
       data: tree,
+      allowUpperLevelView: allowUpperLevelView,
       ...options,
     })
   }

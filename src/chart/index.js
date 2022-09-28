@@ -22,7 +22,7 @@ function init(options) {
     return
   }
 
-  console.log("NVM LINK WORKING!!");
+  console.log("NPM LINK WORKING!!");
 
   const {
     guid,

@@ -1,10 +1,7 @@
 module.exports = onParentClick
 
 function onParentClick(configOnClick, d) {
-  //event.preventDefault()
-
   // console.log("Clicked on get parent of the card:");
-  // console.log(d);
 
   const { loadConfig } = configOnClick
   const config = loadConfig()
@@ -39,13 +36,6 @@ function handleResult(config, d) {
 
   return datum => {
 
-    // Datum is the new boss
-
-    // console.log("Datum");
-    // console.log(datum);
-    // console.log("Children");
-    // console.log(datum.children);
-    
     if (datum.children == undefined) {
       
       // there's no parent! Get rid of the + button
@@ -66,9 +56,12 @@ function handleResult(config, d) {
     const children = datum.children.map(item => {
       if (item.id === d.id) {
         item.hasParent = true;
+        //item.textWrapped = false;
         d.hasParent = true;
+        //d.textWrapped = true;
         return { ...item, ...d }
       } else {
+        //item.textWrapped = false;
         return item
       }
     })

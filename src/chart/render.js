@@ -24,6 +24,7 @@ function render(config) {
     svgroot,
     svg,
     tree,
+    allowUpperLevelView,
     animationDuration,
     nodeWidth,
     nodeHeight,
@@ -58,6 +59,7 @@ function render(config) {
   config.nodes = nodes
 
   nodes.forEach(function(d) {
+
     // Normalize for fixed-depth.
     d.y = d.depth * lineDepthY
     
@@ -66,7 +68,7 @@ function render(config) {
     d.coinYexpanded = nodeHeight + 7;
 
     // Instantiate local variables for text wrap
-    //d.textWrapped = false;
+    // d.textWrapped = false;
 
     if (d.isOpen === undefined) {
       if (!d.hasParent) {
@@ -100,7 +102,7 @@ function render(config) {
     .enter()
     .insert('g')
     .attr('class', CHART_NODE_CLASS)
-    .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
+    .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`);
 
   /*const coinWidth = 32
   const coinX = nodeWidth / 2 - (coinWidth / 2)
@@ -117,7 +119,14 @@ function render(config) {
   nodeEnter
     .append('rect')
     .attr('id', d => `get-parent-shadow-${d.id}`)
-    .attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
+    //.attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
+    .attr('class', function(d) {
+      if(!d.hasParent && d.hasManager && allowUpperLevelView)
+      {
+        return `box coin`
+      }
+      return 'remove';
+    })
     .attr('x', nodeWidth / 2 - (coinWidth / 2))
     .attr('y', parentCoinYnormal)
     .attr('width', coinWidth)
@@ -136,7 +145,14 @@ function render(config) {
   nodeEnter
     .append('rect')
     .attr('id', d => `get-parent-background-${d.id}`)
-    .attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
+    //.attr('class', d => (d.hasParent ? 'remove' : 'box coin'))
+    .attr('class', function(d) {
+      if(!d.hasParent && d.hasManager && allowUpperLevelView)
+      {
+        return `box coin`
+      }
+      return 'remove';
+    })
     .attr('x', nodeWidth / 2 - (coinWidth / 2))
     .attr('y', parentCoinYnormal)
     .attr('width', coinWidth)
@@ -153,7 +169,14 @@ function render(config) {
   nodeEnter
     .append('text')
     .attr('id', d => `get-parent-text-${d.id}`)
-    .attr('class', d => (d.hasParent ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`))
+    .attr('class', function(d) {
+      if(!d.hasParent && d.hasManager && allowUpperLevelView)
+      {
+        return `${PERSON_REPORTS_CLASS} coin-text`
+      }
+      return 'remove';
+      //(d.hasParent ? 'remove' : `${PERSON_REPORTS_CLASS} coin-text`)
+    })
     .attr('x', nodeWidth / 2)
     .attr('y', parentCoinYnormal + 9)
     .attr('dy', '.7em')
@@ -185,7 +208,6 @@ function render(config) {
     .style('cursor', helpers.getCursorForNode)
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
-    
 
   // Person's Coin Background Card
   nodeEnter
@@ -221,7 +243,6 @@ function render(config) {
     .on('click', onClick(config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
-
 
   // Person Card Shadow
   nodeEnter
@@ -352,8 +373,8 @@ function render(config) {
     .style('font-size', 14)
     .style('display', 'none')
     .text(function(d) {
-      if (!d.textWrapped) {
-        const truncateLen = 14;
+      if (!d.textWrapped && d.person.aboutMe != null && d.person.aboutMe.length > 0) {
+        const truncateLen = 18;
         var htmlRemoved = stripHTMLtags(d.person.aboutMe);
         var txtlen = htmlRemoved.split(' ').length;
         var aboutMe = truncate(htmlRemoved, truncateLen);
@@ -375,7 +396,7 @@ function render(config) {
     .attr('id', d => `person-mobile-number-${d.id}`)
     .attr('class', PERSON_MOBILENUMBER_CLASS + ' unedited main-card')
     .attr('x', avatarPos.x)
-    .attr('y', avatarPos.y + 130)
+    .attr('y', avatarPos.y + 150)
     .attr('dy', '.3em')
     .attr('width', 260)
     .style('cursor', 'default')
@@ -383,7 +404,6 @@ function render(config) {
     .style('font-size', 14)
     .style('display', 'none')
     .text(d => d.person.mobileNumber)
-  
   
   // Default Avatar's text
   nodeEnter
@@ -404,7 +424,6 @@ function render(config) {
     .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
-
 
   // Person's Avatar
   nodeEnter
@@ -522,6 +541,8 @@ function render(config) {
     .attr("y2", 38)
     .style("stroke", titleColor)
     .style("stroke-width", 1)
+    .style('cursor', helpers.getCursorForNode)
+    .on('click', d => expandCard(d.id, d) )
 
   nodeEnter
   .append('line')
@@ -533,6 +554,8 @@ function render(config) {
     .attr("y2", 38)
     .style("stroke", titleColor)
     .style("stroke-width", 1)
+    .style('cursor', helpers.getCursorForNode)
+    .on('click', d => expandCard(d.id, d) )
 
   // remove all empty ones
   d3.selectAll('.remove')
@@ -562,7 +585,7 @@ function render(config) {
   const link = svg.selectAll('path.link').data(links, d => d.target.id)
 
   // Wrap the texts
-  const wrapWidth = 180
+  const wrapWidth = 160;
   const wrapWidthFull = 260;
   svg.selectAll('text.unedited.' + PERSON_NAME_CLASS).call(wrapText, wrapWidth)
   svg.selectAll('text.unedited.' + PERSON_TITLE_CLASS).call(wrapText, wrapWidth)
@@ -600,6 +623,8 @@ function render(config) {
 
   d3.select(downloadPdfId).on('click', function() {
     exportOrgChartPdf(config)
+
+    console.log('12');
   })
   onConfigChange(config)
 }
@@ -621,18 +646,17 @@ function expandCard(id, d) {
     card
       .transition()
       .duration(150)
-      .attr('height', 71)
+      .attr('height', 80)
     cardcontainer
       .transition()
       .duration(150)  
-      .attr('height', 71)
+      .attr('height', 80)
     arrow.attr('y1', 32)
     arrow.attr('y2', 38)
 
     department.style('display', 'none')
     mobile.style('display', 'none')
     aboutMe.style('display', 'none')
-
     phone.style('display', 'none')
     speech.style('display', 'none')
     email.style('display', 'none')
@@ -647,24 +671,26 @@ function expandCard(id, d) {
       .transition()
       .duration(150)  
       .attr('height', 247)
+      .each('end', function() {
+        department.style('display', 'inline')
+        mobile.style('display', 'inline')
+        aboutMe.style('display', 'inline')
+        phone.style('display', 'inline')
+        speech.style('display', 'inline')
+        email.style('display', 'inline')
+
+        if(!d.textWrapped)
+        {
+          const wrapWidth = 260;
+          department.call(wrapText, wrapWidth)
+          aboutMe.call(wrapText, wrapWidth)
+          mobile.call(wrapText, wrapWidth)
+
+        d.textWrapped = true;
+        }
+      })
     arrow.attr('y2', 31)
     arrow.attr('y1', 37)
-    department.style('display', 'inline')
-    mobile.style('display', 'inline')
-    aboutMe.style('display', 'inline')
-    phone.style('display', 'inline')
-    speech.style('display', 'inline')
-    email.style('display', 'inline')
-
-    if(!d.textWrapped)
-    {
-      const wrapWidth = 260;
-      department.call(wrapText, wrapWidth)
-      aboutMe.call(wrapText, wrapWidth)
-      mobile.call(wrapText, wrapWidth)
-
-      d.textWrapped = true;
-    }
   }
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')

@@ -8,9 +8,6 @@ function onClick(configOnClick) {
 
   return datum => {
 
-    // console.log("Datum")
-    // console.log(datum);
-
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
     const { loadChildren, render, onPersonClick } = config
@@ -58,6 +55,7 @@ function onClick(configOnClick) {
       config.callerNode = datum
       config.callerMode = 0
       datum._children = datum.children
+      datum._children.forEach(nodeNotWrapped)
       datum.children = null
 
       moveCoinUp(datum);
@@ -181,4 +179,9 @@ function handleChildrenResult(config, datum) {
       sourceNode: result,
     })
   }
+}
+
+function nodeNotWrapped(datum)
+{
+  datum.textWrapped = false;
 }

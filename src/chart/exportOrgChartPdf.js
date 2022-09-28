@@ -1,4 +1,4 @@
-const jsPDF = require('jspdf')
+const {jsPDF} = require('jspdf')
 
 module.exports = exportOrgChartPdf
 
@@ -97,4 +97,5 @@ function exportOrgChartPdf({ loadConfig }) {
     pdf.save('Orgchart.pdf')
     downlowdedOrgChart(true)
   }
+  console.log("11");
 }
