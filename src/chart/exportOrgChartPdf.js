@@ -16,31 +16,15 @@ function exportOrgChartPdf({ loadConfig }) {
   } = config
 
   // a4 width and heigth for landscape
-  const a4Width = 3508
-  const a4Height = 2480
+  //const a4Width = 3508
+  //const a4Height = 2480
 
   // svg width and height
   const svgWidth = nodeLeftX + nodeRightX
-  const svgHeight = nodeY + nodeHeight + 48
+  const svgHeight = nodeY + nodeHeight
 
   // calculating ratio for better quality if the svgWidth is less than a4Width
-  const ratio = svgWidth > a4Width ? 1 : 2
-
-  const widthWithRatio = svgWidth > a4Width ? svgWidth : svgWidth * ratio
-  const heightWithRatio = svgWidth > a4Width ? svgHeight : svgHeight * ratio
-
-  const defaultScale = svgWidth > 600 ? 0.75 : 0.6
-
-  // scale 
-  const scaleX = a4Width / widthWithRatio
-  const scaleY = a4Height / heightWithRatio
-  const chooseScale = scaleX < scaleY ? scaleX : scaleY
-  const scale = widthWithRatio > a4Width ? chooseScale - 0.12 : defaultScale
-  const translateX = nodeLeftX * scale + margin.left / 2
-
-  // Final width and height
-  const width = widthWithRatio * 0.85
-  const height = heightWithRatio * 0.85
+  const ratio = 2
 
   // checking wether it has canvas in the convas-container div
   document.getElementById(`${id}-canvas-container`).querySelector('canvas')
@@ -57,12 +41,17 @@ function exportOrgChartPdf({ loadConfig }) {
   canvas1.height = svgHeight * ratio
   document.getElementById(`${id}-canvas-container`).appendChild(canvas1)
 
+  console.log("canvas1.width");
+  console.log(canvas1.width);
+  console.log("canvas1.height");
+  console.log(canvas1.height);
+
   // creating duplicate org chart svg from original org chart svg
   var step = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   step.id = 'newsvg-' + guid;
   step.setAttribute('width', svgWidth)
   step.setAttribute('height', svgHeight)
-  step.setAttribute('viewBox', `0 0 ${svgWidth} ${svgHeight}`)
+  step.setAttribute('viewBox', `${-nodeLeftX} 0 ${svgWidth} ${svgHeight + 200}`)
   step.innerHTML = document.getElementById('svg-' + guid).innerHTML
 
   document.getElementById(`${id}-svg-container`).querySelector('svg')
@@ -75,7 +64,7 @@ function exportOrgChartPdf({ loadConfig }) {
 
   // appending g element from svg
   var g = document.getElementById(`${id}-svg-container`).querySelector('g')
-  g.setAttribute('transform', `translate(${translateX}, 2) scale(${scale})`)
+  g.setAttribute('transform', `translate(0,0)`)
   var html = new XMLSerializer().serializeToString(
     document.getElementById(`${id}-svg-container`).querySelector('svg')
   )
@@ -89,13 +78,18 @@ function exportOrgChartPdf({ loadConfig }) {
 
   // downloading the image
   image.onload = function() {
-    context.drawImage(image, 0, 0, width, height)
+    context.drawImage(image, 0, 0, canvas.width, canvas.height)
     const canvasData = canvas.toDataURL('image/jpeg,1.0')
 
-    const pdf = new jsPDF('l', 'px', [a4Width, a4Height])
-    pdf.addImage(canvasData, 'JPEG', 15, 2, width, height)
+    const pdf = new jsPDF({
+      orientation: 'l',
+      unit: 'px',
+      format: [canvas.width, canvas.height + 150],
+      hotfixes: ["px_scaling"]
+    })
+
+    pdf.addImage(canvasData, 'JPEG', 0, 150, canvas.width, canvas.height)
     pdf.save('Orgchart.pdf')
     downlowdedOrgChart(true)
   }
-  console.log("11");
 }

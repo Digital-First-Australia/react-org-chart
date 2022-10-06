@@ -16,7 +16,10 @@ const PERSON_REPORTS_CLASS = 'org-chart-person-reports'
 const PERSON_DEPARTMENT_CLASS = 'org-chart-person-department'
 const PERSON_ABOUTME_CLASS = 'org-chart-person-aboutme'
 const PERSON_MOBILENUMBER_CLASS = 'org-chart-person-mobilenumber'
+const PERSON_EMAIL_CLASS = 'org-chart-person-email'
+const PERSON_SENDMESSAGE_CLASS = 'org-chart-person-sendmessage'
 const PERSON_AVATARTEXT_CLASS = 'org-chart-person-avatartext'
+import SVGICONS from './assets/svgIcons';
 
 function render(config) {
   const {
@@ -353,7 +356,8 @@ function render(config) {
     .attr('width', 260)
     .style('cursor', 'default')
     .style('fill', nameColor)
-    .style('font-size', 14)
+    .style('font-size', 13)
+    .style('font-weight', 500)
     .style('display', 'none')
     .text(function(d) {
       return d.person.department;
@@ -370,7 +374,7 @@ function render(config) {
     .attr('width', 260)
     .style('cursor', 'default')
     .style('fill', nameColor)
-    .style('font-size', 14)
+    .style('font-size', 13)
     .style('display', 'none')
     .text(function(d) {
       if (!d.textWrapped && d.person.aboutMe != null && d.person.aboutMe.length > 0) {
@@ -390,21 +394,91 @@ function render(config) {
       }
     })
 
-    // Person's mobile number
+    //Email icon
+    nodeEnter.append("svg:image")
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y + 145)
+    .attr('width', 20)
+    .attr('height', 24)
+    .attr("href", 'data:image/svg+xml;base64,' + SVGICONS.SVG_EMAIL)
+    .attr('id', d => `email-svg-${d.id}`)
+    .style('cursor', 'default')
+    .style('display', 'none')
+
+    // Person's email 
+    nodeEnter
+    .append('text')
+    .attr('id', d => `person-email-${d.id}`)
+    .attr('class', PERSON_EMAIL_CLASS + ' unedited main-card')
+    .attr('x', avatarPos.x + 30)
+    .attr('y', avatarPos.y + 156)
+    .attr('dy', '.3em')
+    .attr('width', 260)
+    .style('cursor', 'pointer')
+    .style('fill', nameColor)
+    .style('font-size', 13)
+    .style('display', 'none')
+    .append('a')
+    .html(d => d.person.email.toLowerCase())
+    .attr('href', d => `mailto::${d.person.email}`)
+
+    //Phone icon
+    nodeEnter.append("svg:image")
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y + 169)
+    .attr('width', 20)
+    .attr('height', 24)
+    .attr("href", 'data:image/svg+xml;base64,' + SVGICONS.SVG_PHONE)
+    .attr('id', d => `phone-svg-${d.id}`)
+    .style('cursor', 'default')
+    .style('display', 'none')
+
+    // Person's mobile number 
     nodeEnter
     .append('text')
     .attr('id', d => `person-mobile-number-${d.id}`)
     .attr('class', PERSON_MOBILENUMBER_CLASS + ' unedited main-card')
-    .attr('x', avatarPos.x)
-    .attr('y', avatarPos.y + 150)
+    .attr('x', avatarPos.x + 30)
+    .attr('y', avatarPos.y + 180)
     .attr('dy', '.3em')
     .attr('width', 260)
-    .style('cursor', 'default')
+    .style('cursor', 'pointer')
     .style('fill', nameColor)
-    .style('font-size', 14)
+    .style('font-size', 13)
     .style('display', 'none')
-    .text(d => d.person.mobileNumber)
-  
+    .append('a')
+    .html(d => d.person.mobileNumber)
+    .attr('href', d => `tel:${d.person.mobileNumber}`)
+
+  //Speech icon
+  nodeEnter.append("svg:image")
+    .attr('x', avatarPos.x)
+    .attr('y', avatarPos.y + 194)
+    .attr('width', 20)
+    .attr('height', 24)
+    .attr("href", 'data:image/svg+xml;base64,' + SVGICONS.SVG_SPEECH)
+    .attr('id', d => `speech-svg-${d.id}`)
+    .style('cursor', 'default')
+    .style('display', 'none')
+
+    // Person's mobile number 
+    nodeEnter
+    .append('text')
+    .attr('id', d => `person-sendmessage-${d.id}`)
+    .attr('class', PERSON_SENDMESSAGE_CLASS + ' unedited main-card')
+    .attr('x', avatarPos.x + 30)
+    .attr('y', avatarPos.y + 204)
+    .attr('dy', '.3em')
+    .attr('width', 260)
+    .style('cursor', 'pointer')
+    .style('fill', nameColor)
+    .style('font-size', 13)
+    .style('display', 'none')
+    .append('a')
+    .html("Send Message")
+    .attr('href', d => `https://teams.microsoft.com/l/chat/0/0?users=${d.person.email.toLowerCase()}`)
+    .attr('target', '_blank')
+
   // Default Avatar's text
   nodeEnter
     .append('text')
@@ -457,36 +531,6 @@ function render(config) {
     .on('click', d => selectCard(d, config))
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
-
-    //Phone icon
-    nodeEnter.append("svg")
-    .attr('x', avatarPos.x)
-    .attr('y', avatarPos.y + 195)
-    .attr('width', 20)
-    .attr('height', 24)
-    .attr("xlink:href", "chart/assets/phone.svg")
-    .attr('id', d => `phone-svg-${d.id}`)
-    .style('display', 'none')
-
-    //Speech icon
-    nodeEnter.append("svg")
-    .attr('x', avatarPos.x + 40)
-    .attr('y', avatarPos.y + 195)
-    .attr('width', 20)
-    .attr('height', 24)
-    .attr("xlink:href", "chart/assets/speech.svg")
-    .attr('id', d => `speech-svg-${d.id}`)
-    .style('display', 'none')
-
-    //Email icon
-    nodeEnter.append("svg")
-    .attr('x', avatarPos.x + 80)
-    .attr('y', avatarPos.y + 195)
-    .attr('width', 20)
-    .attr('height', 24)
-    .attr("xlink:href", "chart/assets/email.svg")
-    .attr('id', d => `email-svg-${d.id}`)
-    .style('display', 'none')
 
   // Converting to link
   const nodeLink = nodeEnter
@@ -591,7 +635,7 @@ function render(config) {
   svg.selectAll('text.unedited.' + PERSON_TITLE_CLASS).call(wrapText, wrapWidth)
   svg.selectAll('text.unedited.' + PERSON_DEPARTMENT_CLASS).call(wrapText, wrapWidthFull)
   svg.selectAll('text.unedited.' + PERSON_ABOUTME_CLASS).call(wrapText, wrapWidthFull)
-  svg.selectAll('text.unedited.' + PERSON_MOBILENUMBER_CLASS).call(wrapText, wrapWidthFull)
+  //svg.selectAll('text.unedited.' + PERSON_MOBILENUMBER_CLASS).call(wrapText, wrapWidthFull)
   svg.selectAll('text.unedited.' + PERSON_AVATARTEXT_CLASS).call(wrapText, wrapWidthFull)
 
 
@@ -614,7 +658,7 @@ function render(config) {
   })
 
   config.nodeRightX = nodeRightX
-  config.nodeY = nodeY
+  config.nodeY = nodeY + 50
   config.nodeLeftX = nodeLeftX * -1
 
   d3.select(downloadImageId).on('click', function() {
@@ -623,8 +667,6 @@ function render(config) {
 
   d3.select(downloadPdfId).on('click', function() {
     exportOrgChartPdf(config)
-
-    console.log('12');
   })
   onConfigChange(config)
 }
@@ -636,11 +678,13 @@ function expandCard(id, d) {
   const isExpanded = card.attr('isExpanded') == 'true' && cardcontainer.attr('isExpanded') == 'true'
 
   const department = d3.select(`#person-department-${id}`)
-  const mobile = d3.select(`#person-mobile-number-${id}`)
   const aboutMe = d3.select(`#person-about-me-${id}`)
-  const phone = d3.select(`#phone-svg-${id}`)
-  const speech = d3.select(`#speech-svg-${id}`)
-  const email = d3.select(`#email-svg-${id}`)
+  const email = d3.select(`#person-email-${id}`)
+  const mobile = d3.select(`#person-mobile-number-${id}`)
+  const message = d3.select(`#person-sendmessage-${id}`)
+  const phonesvg = d3.select(`#phone-svg-${id}`)
+  const speechsvg = d3.select(`#speech-svg-${id}`)
+  const emailsvg = d3.select(`#email-svg-${id}`)
 
   if(isExpanded) {
     card
@@ -655,12 +699,13 @@ function expandCard(id, d) {
     arrow.attr('y2', 38)
 
     department.style('display', 'none')
-    mobile.style('display', 'none')
     aboutMe.style('display', 'none')
-    phone.style('display', 'none')
-    speech.style('display', 'none')
     email.style('display', 'none')
-
+    mobile.style('display', 'none')
+    message.style('display', 'none')
+    emailsvg.style('display', 'none')
+    phonesvg.style('display', 'none')
+    speechsvg.style('display', 'none')
   }
   else {
     card
@@ -673,19 +718,20 @@ function expandCard(id, d) {
       .attr('height', 247)
       .each('end', function() {
         department.style('display', 'inline')
-        mobile.style('display', 'inline')
-        aboutMe.style('display', 'inline')
-        phone.style('display', 'inline')
-        speech.style('display', 'inline')
+        aboutMe.style('display', 'inline')        
         email.style('display', 'inline')
+        mobile.style('display', 'inline')
+        message.style('display', 'inline')
+        emailsvg.style('display', 'inline')
+        phonesvg.style('display', 'inline')
+        speechsvg.style('display', 'inline')
 
         if(!d.textWrapped)
         {
           const wrapWidth = 260;
           department.call(wrapText, wrapWidth)
           aboutMe.call(wrapText, wrapWidth)
-          mobile.call(wrapText, wrapWidth)
-
+          //mobile.call(wrapText, wrapWidth)
         d.textWrapped = true;
         }
       })
