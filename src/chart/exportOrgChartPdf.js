@@ -20,11 +20,10 @@ function exportOrgChartPdf({ loadConfig }) {
   //const a4Height = 2480
 
   // svg width and height
-  const svgWidth = nodeLeftX + nodeRightX
-  const svgHeight = nodeY + nodeHeight
-
   // calculating ratio for better quality if the svgWidth is less than a4Width
-  const ratio = 2
+  let svgWidth = (nodeLeftX  * 3) + nodeRightX
+  let svgHeight = nodeY + nodeHeight
+  let ratio = 2
 
   // checking wether it has canvas in the convas-container div
   document.getElementById(`${id}-canvas-container`).querySelector('canvas')
@@ -33,6 +32,7 @@ function exportOrgChartPdf({ loadConfig }) {
         .querySelector('canvas')
         .remove()
     : ''
+  document.getElementById('canvas1') ? document.getElementById('canvas1').remove() : "";
 
   // creating a canvas element
   var canvas1 = document.createElement('canvas')
@@ -48,11 +48,11 @@ function exportOrgChartPdf({ loadConfig }) {
 
   // creating duplicate org chart svg from original org chart svg
   var step = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-  step.id = 'newsvg-' + guid;
+  step.id = 'newsvg-'+ guid;
   step.setAttribute('width', svgWidth)
   step.setAttribute('height', svgHeight)
   step.setAttribute('viewBox', `${-nodeLeftX} 0 ${svgWidth} ${svgHeight + 200}`)
-  step.innerHTML = document.getElementById('svg-' + guid).innerHTML
+  step.innerHTML = document.getElementById('svg-'+ guid).innerHTML
 
   document.getElementById(`${id}-svg-container`).querySelector('svg')
     ? document

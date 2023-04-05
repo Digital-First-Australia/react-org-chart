@@ -53,7 +53,7 @@ function render(config) {
     margin,
     onConfigChange,
   } = config
-
+  
   // Compute the new tree layout.
   const nodes = tree.nodes(treeData).reverse()
   const links = tree.links(nodes)
@@ -419,8 +419,8 @@ function render(config) {
     .style('font-size', 13)
     .style('display', 'none')
     .append('a')
-    .html(d => d.person.email.toLowerCase())
-    .attr('href', d => `mailto::${d.person.email}`)
+    .html(d => d.person.email ? d.person.email.toLowerCase() : "NO EMAIL!")
+    .attr('href', d => d.person.email ? `mailto::${d.person.email}` : "NO EMAIL!")
 
     //Phone icon
     nodeEnter.append("svg:image")
@@ -476,7 +476,7 @@ function render(config) {
     .style('display', 'none')
     .append('a')
     .html("Send Message")
-    .attr('href', d => `https://teams.microsoft.com/l/chat/0/0?users=${d.person.email.toLowerCase()}`)
+    .attr('href', d => (d.person.email ? `https://teams.microsoft.com/l/chat/0/0?users=${d.person.email.toLowerCase()}` : 'NO EMAIL!'))
     .attr('target', '_blank')
 
   // Default Avatar's text

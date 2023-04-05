@@ -3,9 +3,9 @@ module.exports = exportOrgChartImage
 function exportOrgChartImage({ loadConfig }) {
   const config = loadConfig()
   const { id, downlowdedOrgChart, nodeLeftX, nodeRightX, nodeY, guid } = config
-  var w = nodeLeftX + nodeRightX
-  var h = nodeY
-  var ratio = 4
+  let w = (nodeLeftX * 3) +nodeRightX
+  let h = nodeY
+  let ratio = 4
 
   // checking wether it has canvas in the convas-container div
   document.getElementById(`${id}-canvas-container`).querySelector('canvas')
@@ -15,12 +15,19 @@ function exportOrgChartImage({ loadConfig }) {
         .remove()
     : ''
 
+  document.getElementById('canvas1') ? document.getElementById('canvas1').remove() : "";
+
   // creating a canvas element
   var canvas1 = document.createElement('canvas')
   canvas1.id = 'canvas1'
   canvas1.width = w * ratio
   canvas1.height = h * ratio
   document.getElementById(`${id}-canvas-container`).appendChild(canvas1)
+
+  console.log("canvas1.width");
+  console.log(canvas1.width);
+  console.log("canvas1.height");
+  console.log(canvas1.height);
 
   // creating duplicate org chart svg from original org chart svg
   var step = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
