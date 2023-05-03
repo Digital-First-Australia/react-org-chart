@@ -30,7 +30,6 @@ function render(config) {
     allowUpperLevelView,
     animationDuration,
     nodeWidth,
-    nodeHeight,
     nodePaddingX,
     nodePaddingY,
     nodeBorderRadius,
@@ -53,7 +52,10 @@ function render(config) {
     margin,
     onConfigChange,
   } = config
+
+  config.expandedCards ? "" : config.expandedCards = []
   
+  let nodeHeight = config.nodeHeight
   // Compute the new tree layout.
   const nodes = tree.nodes(treeData).reverse()
   const links = tree.links(nodes)
@@ -62,7 +64,15 @@ function render(config) {
   config.nodes = nodes
 
   nodes.forEach(function(d) {
-
+    
+    if(config.expandedCards.length > 0){
+      config.expandedCards.forEach(function(id) {
+        if(id == d.id){
+          nodeHeight = 247;
+          d.nodeHeight = nodeHeight 
+        }
+      })
+    }
     // Normalize for fixed-depth.
     d.y = d.depth * lineDepthY
     
@@ -251,7 +261,7 @@ function render(config) {
   nodeEnter
     .append('rect')
     .attr('width', nodeWidth)
-    .attr('height', nodeHeight)
+    .attr('height',  d => d.coinYexpanded - 7)
     .attr('class', 'main-card')
     .attr('id', d => `card-${d.id}`)
     .attr('fill', backgroundColor)
@@ -276,7 +286,7 @@ function render(config) {
         }
       })
     .attr('width', nodeWidth)
-    .attr('height', nodeHeight)
+    .attr('height',  d => d.coinYexpanded - 7)
     .attr('fill', function(d) {
         
       // check parent is selected
@@ -418,7 +428,7 @@ function render(config) {
     .style('fill', nameColor)
     .style('font-size', 13)
     .style('display', 'none')
-    .append('a')
+    .append('a') 
     .html(d => d.person.email ? d.person.email.toLowerCase() : "NO EMAIL!")
     .attr('href', d => d.person.email ? `mailto::${d.person.email}` : "NO EMAIL!")
 
@@ -570,7 +580,7 @@ function render(config) {
     .attr('fill', titleColor)
     .attr('fill-opacity', 0.08)
     .style('cursor', helpers.getCursorForNode)
-    .on('click', d => expandCard(d.id, d) )
+    .on('click', d => expandCard(d.id, d, config) )
     .on('mouseover', d => coinHoverMove(d, coinYhover))
     .on('mouseout', d => coinHoverMove(d, d.coinYnormal))
 
@@ -586,7 +596,7 @@ function render(config) {
     .style("stroke", titleColor)
     .style("stroke-width", 1)
     .style('cursor', helpers.getCursorForNode)
-    .on('click', d => expandCard(d.id, d) )
+    .on('click', d => expandCard(d.id, d, config) )
 
   nodeEnter
   .append('line')
@@ -599,7 +609,7 @@ function render(config) {
     .style("stroke", titleColor)
     .style("stroke-width", 1)
     .style('cursor', helpers.getCursorForNode)
-    .on('click', d => expandCard(d.id, d) )
+    .on('click', d => expandCard(d.id, d, config) )
 
   // remove all empty ones
   d3.selectAll('.remove')
@@ -626,8 +636,10 @@ function render(config) {
     .remove()
 
   // Update the links
+  console.log("ERWIN links", links)
   const link = svg.selectAll('path.link').data(links, d => d.target.id)
 
+  console.log("ERWIN link", link)
   // Wrap the texts
   const wrapWidth = 160;
   const wrapWidthFull = 260;
@@ -671,7 +683,8 @@ function render(config) {
   onConfigChange(config)
 }
 
-function expandCard(id, d) {
+function expandCard(id, d, config) {
+  console.log("ERWIN config", config)
   const card = d3.select(`#card-${id}`)
   const cardcontainer = d3.select(`#cardcontainer-${id}`)
   const arrow = d3.selectAll(`#arrow-${id}`)
@@ -687,6 +700,13 @@ function expandCard(id, d) {
   const emailsvg = d3.select(`#email-svg-${id}`)
 
   if(isExpanded) {
+
+    const index = config.expandedCards.indexOf(id);
+
+    if(index >= 0){
+      config.expandedCards.splice(index, 1);
+    }
+    
     card
       .transition()
       .duration(150)
@@ -697,7 +717,7 @@ function expandCard(id, d) {
       .attr('height', 80)
     arrow.attr('y1', 32)
     arrow.attr('y2', 38)
-
+    
     department.style('display', 'none')
     aboutMe.style('display', 'none')
     email.style('display', 'none')
@@ -708,6 +728,10 @@ function expandCard(id, d) {
     speechsvg.style('display', 'none')
   }
   else {
+    //ADD ID TO EXPANDED CARDS
+    config.expandedCards.push(id);
+    //UPDATE LINES
+    //renderLines(config, true);
     card
       .transition()
       .duration(150)  
@@ -731,6 +755,7 @@ function expandCard(id, d) {
           const wrapWidth = 260;
           department.call(wrapText, wrapWidth)
           aboutMe.call(wrapText, wrapWidth)
+          //email.call(wrapText, wrapWidth)
           //mobile.call(wrapText, wrapWidth)
         d.textWrapped = true;
         }
@@ -740,6 +765,8 @@ function expandCard(id, d) {
   }
   card.attr('isExpanded', isExpanded ? 'false' : 'true')
   cardcontainer.attr('isExpanded', isExpanded ? 'false' : 'true')
+  console.log("ERWIN RENDER CONFIG", config)
+  render(config)
 };
 
 function coinHoverMove(d, coinYnew) {
